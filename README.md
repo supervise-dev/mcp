@@ -107,7 +107,7 @@ Start the MCP server (default port: 1234):
 ./dist/mcp
 
 # Or with a custom port
-PORT=4000 ./dist/mcp
+SV_MCP_PORT=4000 ./dist/mcp
 
 # Development mode with hot reload
 bun run dev
