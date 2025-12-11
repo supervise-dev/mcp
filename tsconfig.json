@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "allowJs": true, // allow importing `.js` from `.ts`
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "esModuleInterop": true, // allow default imports for CommonJS modules
+    "forceConsistentCasingInFileNames": true,
+    "lib": ["esnext"],
+    "module": "esnext",
+    "moduleDetection": "force",
+    "moduleResolution": "bundler",
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext",
+  },
+  "include": [
+    "src/**/*"
+  ]
+}

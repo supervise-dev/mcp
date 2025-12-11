@@ -1,0 +1,15 @@
+coverage
+node_modules
+layers
+CHANGELOG.md
+*.log*
+.nuxt
+.nitro
+.cache
+.output
+.env
+dist
+.idea/
+.vercel
+.DS_Store
+pnpm-lock.yaml

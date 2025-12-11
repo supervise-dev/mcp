@@ -1,0 +1,51 @@
+{
+  "private": true,
+  "name": "@supervise-dev/mcp",
+  "type": "module",
+  "version": "0.0.1",
+  "devDependencies": {
+    "@trivago/prettier-plugin-sort-imports": "^6.0.0",
+    "@types/bun": "latest",
+    "mastra": "^0.18.8",
+    "prettier": "^3.7.4",
+    "prettier-plugin-jsdoc": "^1.8.0",
+    "prettier-plugin-organize-attributes": "^1.0.0",
+    "prettier-plugin-organize-imports": "^4.3.0",
+    "prettier-plugin-sort-package-json": "^1.1.0"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.3"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "postinstall": "bun run build",
+    "build": "bun build src/index.ts --compile --outfile ./dist/mcp --target bun",
+    "build:darwin-arm64": "bun build src/index.ts --compile --outfile ./dist/mcp-darwin-arm64 --target bun-darwin-arm64",
+    "build:darwin-x64": "bun build src/index.ts --compile --outfile ./dist/mcp-darwin-x64 --target bun-darwin-x64",
+    "build:linux-arm64": "bun build src/index.ts --compile --outfile ./dist/mcp-linux-arm64 --target bun-linux-arm64",
+    "build:linux-x64": "bun build src/index.ts --compile --outfile ./dist/mcp-linux-x64 --target bun-linux-x64",
+    "dev": "bun src/index.ts",
+    "format": "prettier --write \"src/**/*.ts\"",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit"
+  },
+  "bin": {
+    "mcp": "dist/mcp"
+  },
+  "dependencies": {
+    "@mastra/core": "^0.24.8",
+    "@mastra/evals": "^0.14.4",
+    "@mastra/libsql": "^0.16.4",
+    "@mastra/loggers": "^0.10.19",
+    "@mastra/mcp": "^0.14.5",
+    "@mastra/memory": "^0.15.13",
+    "@types/node": "^25.0.0",
+    "simple-git": "^3.30.0",
+    "zod": "^4"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  }
+}
