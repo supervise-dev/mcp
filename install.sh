@@ -17,8 +17,6 @@ case "$ARCH" in
 esac
 
 # --- Define Dependencies ---
-# 1. Standard Native Modules (tarball contains the binary)
-# 2. Complex Modules (need manual binary download, handled in logic below)
 DEPENDENCIES=()
 
 case "$PLATFORM-$N_ARCH" in
@@ -63,35 +61,50 @@ install_npm_tarball() {
   curl -fSL "$TARBALL_URL" | tar -xz -C "$TARGET_DIR" --strip-components=1 2>/dev/null
 }
 
-# --- Helper: Post-Install Hooks (The Fix for Ripgrep) ---
+# --- Helper: Post-Install Hooks (UPDATED & FIXED) ---
 run_post_install() {
   local FULL_PKG="$1"
   local PKG_NAME="${FULL_PKG%%:*}"
-  local PKG_VER="${FULL_PKG##*:}"
 
   # SPECIAL HANDLING FOR VSCODE-RIPGREP
   if [ "$PKG_NAME" = "vscode-ripgrep" ]; then
-    echo "   ⚙️  Manual Setup: Downloading binary for vscode-ripgrep..."
+    echo "   ⚙️  Manual Setup: Downloading official ripgrep binary..."
 
     local BIN_DIR="$NODE_MODULES_DIR/$PKG_NAME/bin"
     mkdir -p "$BIN_DIR"
 
-    # Map to Microsoft's prebuilt release naming
-    # https://github.com/microsoft/ripgrep-prebuilt/releases
-    local RG_PLATFORM="$PLATFORM"
-    [ "$RG_PLATFORM" = "darwin" ] && RG_PLATFORM="mac" # MS uses 'mac' not 'darwin'
+    # 1. Hardcode underlying 'ripgrep' version to 13.0.0 (Matches vscode-ripgrep 1.13.x era)
+    local RG_VERSION="13.0.0"
 
-    local RG_URL="https://github.com/microsoft/ripgrep-prebuilt/releases/download/v${PKG_VER}/ripgrep-${RG_PLATFORM}-${N_ARCH}.tar.gz"
+    # 2. Map platform/arch to Rust target names correctly
+    local RUST_TARGET=""
+    if [ "$PLATFORM" = "linux" ]; then
+       if [ "$N_ARCH" = "x64" ]; then RUST_TARGET="x86_64-unknown-linux-musl"; fi
+       if [ "$N_ARCH" = "arm64" ]; then RUST_TARGET="aarch64-unknown-linux-gnu"; fi
+    elif [ "$PLATFORM" = "darwin" ]; then
+       if [ "$N_ARCH" = "x64" ]; then RUST_TARGET="x86_64-apple-darwin"; fi
+       if [ "$N_ARCH" = "arm64" ]; then RUST_TARGET="aarch64-apple-darwin"; fi
+    fi
 
-    # Download and extract just the 'rg' binary
+    if [ -z "$RUST_TARGET" ]; then
+        echo "      ❌ Could not determine Rust target for $PLATFORM-$N_ARCH"
+        exit 1
+    fi
+
+    # 3. Download from official BurntSushi/ripgrep releases (Stable URLs)
+    local RG_URL="https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-${RUST_TARGET}.tar.gz"
+
     if curl -fSL "$RG_URL" | tar -xz -C "$BIN_DIR" 2>/dev/null; then
-       # The tar usually contains a folder structure; we might need to move the binary up
-       # Or sometimes it extracts strictly 'rg'. Let's ensure it's executable.
-       mv "$BIN_DIR/ripgrep-$RG_PLATFORM-$N_ARCH/rg" "$BIN_DIR/rg" 2>/dev/null || true
+       # Find the binary inside the extracted folder and move it to ./bin/rg
+       find "$BIN_DIR" -name "rg" -type f -exec mv {} "$BIN_DIR/rg" \;
        chmod +x "$BIN_DIR/rg"
-       echo "      ✓ generic ripgrep binary installed"
+
+       # Cleanup empty folders
+       find "$BIN_DIR" -type d -empty -delete 2>/dev/null || true
+
+       echo "      ✓ Official ripgrep v${RG_VERSION} installed"
     else
-       echo "      ❌ Failed to download ripgrep binary"
+       echo "      ❌ Failed to download ripgrep binary from $RG_URL"
        exit 1
     fi
   fi
