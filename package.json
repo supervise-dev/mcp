@@ -50,5 +50,8 @@
   },
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
-  }
+  },
+  "trustedDependencies": [
+    "vscode-ripgrep"
+  ]
 }
