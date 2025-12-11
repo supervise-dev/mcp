@@ -25,7 +25,7 @@ import {
   tagTool,
   writeFileTool,
 } from "./tools";
-import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "./tools/grep";
+import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "./tools";
 import { MCPServer } from "@mastra/mcp";
 import * as http from "node:http";
 
@@ -35,7 +35,6 @@ const server = new MCPServer({
   name: "My Custom Server",
   version: "1.0.0",
   tools: {
-    // File system tools
     [existsTool.id]: existsTool,
     [mkdirTool.id]: mkdirTool,
     [readdirTool.id]: readdirTool,
@@ -61,7 +60,6 @@ const server = new MCPServer({
     [checkoutTool.id]: checkoutTool,
     [mergeTool.id]: mergeTool,
     [createTagTool.id]: createTagTool,
-    // Grep tools
     [grepSearchTool.id]: grepSearchTool,
     [grepFilesWithMatchesTool.id]: grepFilesWithMatchesTool,
     [grepCountMatchesTool.id]: grepCountMatchesTool,
@@ -77,7 +75,6 @@ const httpServer = http.createServer(async (req, res) => {
     res.end();
     return;
   }
-
   await server.startSSE({
     url: new URL(req.url || "", "http://localhost:1234"),
     ssePath: "/sse",
