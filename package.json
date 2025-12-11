@@ -42,6 +42,7 @@
     "@mastra/memory": "^0.15.13",
     "@types/node": "^25.0.0",
     "simple-git": "^3.30.0",
+    "vscode-ripgrep": "^1.13.2",
     "zod": "^4"
   },
   "publishConfig": {

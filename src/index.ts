@@ -25,6 +25,7 @@ import {
   tagTool,
   writeFileTool,
 } from "./tools";
+import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "./tools/grep";
 import { MCPServer } from "@mastra/mcp";
 import * as http from "node:http";
 
@@ -60,6 +61,10 @@ const server = new MCPServer({
     [checkoutTool.id]: checkoutTool,
     [mergeTool.id]: mergeTool,
     [createTagTool.id]: createTagTool,
+    // Grep tools
+    [grepSearchTool.id]: grepSearchTool,
+    [grepFilesWithMatchesTool.id]: grepFilesWithMatchesTool,
+    [grepCountMatchesTool.id]: grepCountMatchesTool,
   },
 });
 
