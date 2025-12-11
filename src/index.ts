@@ -27,26 +27,47 @@ import {
   writeFileTool,
 } from "./tools";
 import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "./tools";
+import { getEnvOrThrow } from "./utils/env";
 import { Mastra } from "@mastra/core";
 import { LibSQLStore } from "@mastra/libsql";
 import { PinoLogger } from "@mastra/loggers";
 import { MCPServer } from "@mastra/mcp";
+import { jwk } from "hono/jwk";
 
 export const mastra = new Mastra({
   storage: new LibSQLStore({
-    url: ":memory:",
+    url: getEnvOrThrow("SV_MCP_STORAGE"),
   }),
   logger: new PinoLogger({
     name: "Supervise MCP",
     level: "info",
   }),
   server: {
-    host: process.env.SV_MCP_HOST,
-    port: process.env.SV_MCP_PORT,
+    host: getEnvOrThrow("SV_MCP_HOST"),
+    port: getEnvOrThrow("SV_MCP_PORT", Number),
+    cors: {
+      origin: [getEnvOrThrow("SV_MCP_CORS")],
+      allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+      allowHeaders: ["Content-Type", "Authorization"],
+      credentials: false,
+    },
+    middleware: [
+      {
+        path: "/api/*",
+        handler: jwk({
+          jwks_uri: getEnvOrThrow("SV_MCP_JWK"),
+          allow_anon: getEnvOrThrow("SV_MCP_JWT_ALLOW_ANON", JSON.parse),
+          verification: {
+            iss: getEnvOrThrow("SV_MCP_JWK_ISS"),
+            aud: getEnvOrThrow("SV_MCP_JWK_AUD"),
+          },
+        }),
+      },
+    ],
   },
   mcpServers: {
     supervise: new MCPServer({
-      name: "supervise",
+      name: getEnvOrThrow("SV_MCP_NAME"),
       version: version,
       tools: {
         [existsTool.id]: existsTool,
