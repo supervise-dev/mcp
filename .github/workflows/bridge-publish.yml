@@ -31,6 +31,8 @@ jobs:
 
       - name: Install dependencies
         run: bun install
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build MCP package
         run: bun run build

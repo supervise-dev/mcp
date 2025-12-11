@@ -41,6 +41,8 @@ jobs:
 
       - name: Install dependencies
         run: bun install
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build MCP binary
         run: bun run build:${{ matrix.target }}
