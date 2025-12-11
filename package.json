@@ -3,6 +3,7 @@
   "type": "module",
   "version": "0.0.1",
   "devDependencies": {
+    "@modelcontextprotocol/inspector": "^0.17.5",
     "@trivago/prettier-plugin-sort-imports": "^6.0.0",
     "@types/bun": "latest",
     "mastra": "^0.18.8",
@@ -27,6 +28,7 @@
     "build:linux-x64": "bun build src/index.ts --compile --outfile ./dist/mcp-linux-x64 --target bun-linux-x64",
     "dev": "bun src/index.ts",
     "format": "prettier --write \"src/**/*.ts\"",
+    "inspect": "bunx @modelcontextprotocol/inspector http://localhost:1234/mcp",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit"
   },
