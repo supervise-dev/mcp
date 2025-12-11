@@ -5,6 +5,7 @@ A high-performance Model Context Protocol (MCP) server providing remote filesyst
 ## Features
 
 ### Filesystem Operations
+
 - `fs.exists` - Check if file/directory exists
 - `fs.mkdir` - Create directories (with recursive option)
 - `fs.readdir` - Read directory contents (with file type information)
@@ -15,6 +16,7 @@ A high-performance Model Context Protocol (MCP) server providing remote filesyst
 - `fs.delete` - Delete files/directories (with recursive option)
 
 ### Git Operations
+
 - `git.status` - Get repository status (staged, modified, untracked files)
 - `git.log` - Get commit history with optional filtering
 - `git.diff` - Show differences between commits, branches, or working tree
@@ -32,10 +34,12 @@ A high-performance Model Context Protocol (MCP) server providing remote filesyst
 - `git.createTag` - Create new tag at current commit
 
 ### Process Operations
+
 - `process.spawn` - Spawn a process with arguments and capture output
 - `process.exec` - Execute shell commands
 
 ### Key Capabilities
+
 - Binary data support via base64 encoding
 - Full TypeScript support with Zod schema validation
 - Built on MCP (Model Context Protocol) for AI agent integration
@@ -67,6 +71,7 @@ curl -fsSL https://raw.githubusercontent.com/supervise-dev/mcp/master/install.sh
 ```
 
 **Common install directories:**
+
 - `/usr/local/bin` - System-wide binary (requires sudo for some systems)
 - `$HOME/.local/bin` - User-specific binary (add to PATH if needed)
 - `.` - Current directory (default)
@@ -114,36 +119,37 @@ bun run dev
 ```
 
 The server will be available at:
+
 - SSE endpoint: `http://localhost:1234/sse`
 - Message endpoint: `http://localhost:1234/message`
 
 ### Client Usage
 
 ```typescript
-import { MCPClient } from '@mastra/mcp';
+import { MCPClient } from "@mastra/mcp";
 
 const client = new MCPClient({
-  url: 'http://localhost:1234',
-  ssePath: '/sse',
-  messagePath: '/message'
+  url: "http://localhost:1234",
+  ssePath: "/sse",
+  messagePath: "/message",
 });
 await client.connect();
 
 // Filesystem operations
-await client.callTool('fs.writeFile', { path: '/file.txt', data: 'Hello' });
-const { data } = await client.callTool('fs.readFile', { path: '/file.txt' });
-await client.callTool('fs.mkdir', { path: '/dir', recursive: true });
-const { files } = await client.callTool('fs.readdir', { path: '/dir' });
+await client.callTool("fs.writeFile", { path: "/file.txt", data: "Hello" });
+const { data } = await client.callTool("fs.readFile", { path: "/file.txt" });
+await client.callTool("fs.mkdir", { path: "/dir", recursive: true });
+const { files } = await client.callTool("fs.readdir", { path: "/dir" });
 
 // Git operations
-await client.callTool('git.clone', { url: 'https://github.com/user/repo.git', path: '/repo' });
-const status = await client.callTool('git.status', { repoPath: '/repo' });
-await client.callTool('git.add', { repoPath: '/repo', files: ['.'] });
-await client.callTool('git.commit', { repoPath: '/repo', message: 'Update' });
-await client.callTool('git.push', { repoPath: '/repo', remote: 'origin', branch: 'main' });
+await client.callTool("git.clone", { url: "https://github.com/user/repo.git", path: "/repo" });
+const status = await client.callTool("git.status", { repoPath: "/repo" });
+await client.callTool("git.add", { repoPath: "/repo", files: ["."] });
+await client.callTool("git.commit", { repoPath: "/repo", message: "Update" });
+await client.callTool("git.push", { repoPath: "/repo", remote: "origin", branch: "main" });
 
 // Process operations
-const output = await client.callTool('process.spawn', { command: ['ls', '-la'] });
+const output = await client.callTool("process.spawn", { command: ["ls", "-la"] });
 console.log(output.stdout, output.exitCode);
 ```
 
@@ -152,11 +158,13 @@ console.log(output.stdout, output.exitCode);
 All tools are invoked via `client.callTool(toolId, input)`. See the Features section above for complete tool listings.
 
 **Common Input Patterns:**
+
 - Filesystem: `{ path: string, ...options }`
 - Git: `{ repoPath: string, ...options }`
 - Process: `{ command: string[], cwd?: string, env?: Record<string, string> }`
 
 **Process Output:**
+
 ```typescript
 interface ProcessOutput {
   stdout: string;
@@ -200,6 +208,7 @@ Implements the [Model Context Protocol](https://modelcontextprotocol.io/) for AI
 This MCP server provides **unrestricted access** to the server's filesystem, git repositories, and process operations. In production:
 
 ⚠️ **Important**
+
 - Implement authentication and authorization
 - Add path validation and sandboxing
 - Use HTTPS for encrypted communication
