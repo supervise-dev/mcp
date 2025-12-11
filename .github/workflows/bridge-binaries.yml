@@ -1,4 +1,4 @@
-name: Build Bridge Multi-Arch Binaries
+name: Build MCP Multi-Arch Binaries
 
 on:
   push:
@@ -18,16 +18,16 @@ jobs:
         include:
           - os: ubuntu-latest
             target: linux-x64
-            artifact: bridge-linux-x64
+            artifact: mcp-linux-x64
           - os: ubuntu-latest
             target: linux-arm64
-            artifact: bridge-linux-arm64
+            artifact: mcp-linux-arm64
           - os: macos-latest
             target: darwin-x64
-            artifact: bridge-darwin-x64
+            artifact: mcp-darwin-x64
           - os: macos-14
             target: darwin-arm64
-            artifact: bridge-darwin-arm64
+            artifact: mcp-darwin-arm64
 
     runs-on: ${{ matrix.os }}
     permissions:
@@ -42,13 +42,13 @@ jobs:
       - name: Install dependencies
         run: bun install
 
-      - name: Build bridge binary
-        run: bun run build:bridge:${{ matrix.target }}
+      - name: Build MCP binary
+        run: bun run build:${{ matrix.target }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: bridge-${{ matrix.target }}
+          name: mcp-${{ matrix.target }}
           path: dist/${{ matrix.artifact }}
           retention-days: 1
 
@@ -70,29 +70,29 @@ jobs:
       - name: Prepare release assets
         run: |
           mkdir -p release
-          mv artifacts/bridge-linux-x64/bridge-linux-x64 release/
-          mv artifacts/bridge-linux-arm64/bridge-linux-arm64 release/
-          mv artifacts/bridge-darwin-x64/bridge-darwin-x64 release/
-          mv artifacts/bridge-darwin-arm64/bridge-darwin-arm64 release/
-          chmod +x release/bridge-*
+          mv artifacts/mcp-linux-x64/mcp-linux-x64 release/
+          mv artifacts/mcp-linux-arm64/mcp-linux-arm64 release/
+          mv artifacts/mcp-darwin-x64/mcp-darwin-x64 release/
+          mv artifacts/mcp-darwin-arm64/mcp-darwin-arm64 release/
+          chmod +x release/mcp-*
 
       - name: Create or update release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           VERSION=$(node -e "console.log(require('./package.json').version)")
-          TAG="bridge-v${VERSION}"
+          TAG="mcp-v${VERSION}"
 
           # Check if release exists
           if gh release view "$TAG" > /dev/null 2>&1; then
             # Delete old assets
-            gh release delete-asset "$TAG" bridge-linux-x64 bridge-linux-arm64 bridge-darwin-x64 bridge-darwin-arm64 2>/dev/null || true
+            gh release delete-asset "$TAG" mcp-linux-x64 mcp-linux-arm64 mcp-darwin-x64 mcp-darwin-arm64 2>/dev/null || true
             # Upload new assets
             gh release upload "$TAG" release/* --clobber
           else
             # Create new release
             gh release create "$TAG" release/* \
-              --title "Bridge v${VERSION}" \
+              --title "MCP v${VERSION}" \
               --draft=false \
-              --notes "Multi-architecture binaries for bridge v${VERSION}"
+              --notes "Multi-architecture binaries for MCP v${VERSION}"
           fi

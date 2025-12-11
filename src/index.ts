@@ -28,7 +28,7 @@ import {
 import { MCPServer } from "@mastra/mcp";
 import * as http from "node:http";
 
-const PORT = process.env.PORT || 1234;
+const SV_MCP_PORT = process.env.SV_MCP_PORT || 1234;
 
 const server = new MCPServer({
   name: "My Custom Server",
@@ -82,6 +82,6 @@ const httpServer = http.createServer(async (req, res) => {
   });
 });
 
-httpServer.listen(PORT, () => {
-  console.log(`HTTP server listening on port ${PORT}`);
+httpServer.listen(SV_MCP_PORT, () => {
+  console.log(`HTTP server listening on port ${SV_MCP_PORT}`);
 });
