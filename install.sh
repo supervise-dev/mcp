@@ -3,14 +3,27 @@ set -e
 
 # --- Configuration ---
 VERSION="${1:-latest}"
-INSTALL_DIR="${INSTALL_DIR:-/usr/local/bin}"
-NODE_MODULES_DIR="$INSTALL_DIR/node_modules"
+
+# 1. BIN_DIR: Where the 'mcp' command user types goes (clean)
+BIN_DIR="${INSTALL_DIR:-/usr/local/bin}"
+
+# 2. LIB_DIR: Where the messy binaries and node_modules go (hidden)
+#    We default to /usr/local/lib/mcp, or fall back to a subfolder if user is non-root
+if [ -w "/usr/local/lib" ]; then
+  LIB_DIR="/usr/local/lib/mcp"
+else
+  LIB_DIR="$HOME/.local/share/mcp"
+fi
+
+# Override LIB_DIR if explicitly set
+LIB_DIR="${CUSTOM_LIB_PATH:-$LIB_DIR}"
+
+NODE_MODULES_DIR="$LIB_DIR/node_modules"
 
 # --- Detect Platform ---
 PLATFORM=$(uname -s | tr '[:upper:]' '[:lower:]')
 ARCH=$(uname -m)
 
-# Normalize for Node/NPM naming conventions
 case "$ARCH" in
   x86_64) N_ARCH="x64" ;;
   aarch64|arm64) N_ARCH="arm64" ;;
@@ -61,50 +74,37 @@ install_npm_tarball() {
   curl -fSL "$TARBALL_URL" | tar -xz -C "$TARGET_DIR" --strip-components=1 2>/dev/null
 }
 
-# --- Helper: Post-Install Hooks (UPDATED & FIXED) ---
+# --- Helper: Post-Install Hooks (Ripgrep Fix) ---
 run_post_install() {
   local FULL_PKG="$1"
   local PKG_NAME="${FULL_PKG%%:*}"
 
-  # SPECIAL HANDLING FOR VSCODE-RIPGREP
   if [ "$PKG_NAME" = "vscode-ripgrep" ]; then
     echo "   ⚙️  Manual Setup: Downloading official ripgrep binary..."
 
     local BIN_DIR="$NODE_MODULES_DIR/$PKG_NAME/bin"
     mkdir -p "$BIN_DIR"
 
-    # 1. Hardcode underlying 'ripgrep' version to 13.0.0 (Matches vscode-ripgrep 1.13.x era)
     local RG_VERSION="13.0.0"
-
-    # 2. Map platform/arch to Rust target names correctly
     local RUST_TARGET=""
+
     if [ "$PLATFORM" = "linux" ]; then
-       if [ "$N_ARCH" = "x64" ]; then RUST_TARGET="x86_64-unknown-linux-musl"; fi
-       if [ "$N_ARCH" = "arm64" ]; then RUST_TARGET="aarch64-unknown-linux-gnu"; fi
+       [ "$N_ARCH" = "x64" ] && RUST_TARGET="x86_64-unknown-linux-musl"
+       [ "$N_ARCH" = "arm64" ] && RUST_TARGET="aarch64-unknown-linux-gnu"
     elif [ "$PLATFORM" = "darwin" ]; then
-       if [ "$N_ARCH" = "x64" ]; then RUST_TARGET="x86_64-apple-darwin"; fi
-       if [ "$N_ARCH" = "arm64" ]; then RUST_TARGET="aarch64-apple-darwin"; fi
+       [ "$N_ARCH" = "x64" ] && RUST_TARGET="x86_64-apple-darwin"
+       [ "$N_ARCH" = "arm64" ] && RUST_TARGET="aarch64-apple-darwin"
     fi
 
-    if [ -z "$RUST_TARGET" ]; then
-        echo "      ❌ Could not determine Rust target for $PLATFORM-$N_ARCH"
-        exit 1
-    fi
-
-    # 3. Download from official BurntSushi/ripgrep releases (Stable URLs)
     local RG_URL="https://github.com/BurntSushi/ripgrep/releases/download/${RG_VERSION}/ripgrep-${RG_VERSION}-${RUST_TARGET}.tar.gz"
 
     if curl -fSL "$RG_URL" | tar -xz -C "$BIN_DIR" 2>/dev/null; then
-       # Find the binary inside the extracted folder and move it to ./bin/rg
        find "$BIN_DIR" -name "rg" -type f -exec mv {} "$BIN_DIR/rg" \;
        chmod +x "$BIN_DIR/rg"
-
-       # Cleanup empty folders
        find "$BIN_DIR" -type d -empty -delete 2>/dev/null || true
-
        echo "      ✓ Official ripgrep v${RG_VERSION} installed"
     else
-       echo "      ❌ Failed to download ripgrep binary from $RG_URL"
+       echo "      ❌ Failed to download ripgrep binary"
        exit 1
     fi
   fi
@@ -113,11 +113,16 @@ run_post_install() {
 # --- Main Execution ---
 
 echo "setup: $PLATFORM-$N_ARCH"
-mkdir -p "$INSTALL_DIR"
+echo "  - Binaries: $LIB_DIR"
+echo "  - Command:  $BIN_DIR/mcp"
 
-# 1. Download MCP Binary
-REAL_BINARY="$INSTALL_DIR/mcp.bin"
-WRAPPER_SCRIPT="$INSTALL_DIR/mcp"
+# Create directories
+mkdir -p "$BIN_DIR"
+mkdir -p "$LIB_DIR"
+
+# 1. Download MCP Binary to LIB_DIR (Hidden location)
+REAL_BINARY="$LIB_DIR/mcp.bin"
+WRAPPER_SCRIPT="$BIN_DIR/mcp"
 
 if [ "$VERSION" = "latest" ]; then
   URL="https://github.com/supervise-dev/mcp/releases/latest/download/${BINARY_NAME}"
@@ -129,14 +134,15 @@ echo "⬇️  Downloading mcp binary..."
 curl -fSL --progress-bar -o "$REAL_BINARY" "$URL"
 chmod +x "$REAL_BINARY"
 
-# 2. Install Dependencies
+# 2. Install Dependencies to LIB_DIR/node_modules
 echo "⬇️  Installing dependencies..."
 for DEP in "${DEPENDENCIES[@]}"; do
   install_npm_tarball "$DEP"
   run_post_install "$DEP"
 done
 
-# 3. Create Wrapper
+# 3. Create Wrapper in BIN_DIR (The public command)
+# This wrapper points to the HIDDEN Lib directory
 cat > "$WRAPPER_SCRIPT" <<EOF
 #!/bin/sh
 export NODE_PATH="$NODE_MODULES_DIR"
@@ -145,4 +151,4 @@ EOF
 
 chmod +x "$WRAPPER_SCRIPT"
 
-echo "✅ Installation complete."
+echo "✅ Installed successfully."
