@@ -28,6 +28,7 @@ import {
 } from "./tools";
 import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "./tools";
 import { getEnvOrThrow } from "./utils/env";
+import { gitSyncWorkflow } from "@/workflows/git/sync";
 import { Mastra } from "@mastra/core";
 import { LibSQLStore } from "@mastra/libsql";
 import { PinoLogger } from "@mastra/loggers";
@@ -66,7 +67,7 @@ export const mastra = new Mastra({
         },
       },
       {
-        path: "/api/*",
+        path: "/*",
         handler: jwk({
           jwks_uri: getEnvOrThrow("SV_MCP_JWK"),
           allow_anon: getEnvOrThrow("SV_MCP_JWT_ALLOW_ANON", JSON.parse),
@@ -112,7 +113,9 @@ export const mastra = new Mastra({
         [grepFilesWithMatchesTool.id]: grepFilesWithMatchesTool,
         [grepCountMatchesTool.id]: grepCountMatchesTool,
       },
-      workflows: {},
+      workflows: {
+        gitSyncWorkflow,
+      },
     }),
   },
 });

@@ -7,6 +7,8 @@ import {
   LogOutput,
   RemoteInput,
   RemoteOutput,
+  RevParseInput,
+  RevParseOutput,
   StatusInput,
   StatusOutput,
   TagInput,
@@ -138,5 +140,14 @@ export const tagQuery = async ({ input }: { input: TagInput }): Promise<TagOutpu
 
   return {
     tags: tags.all,
+  };
+};
+
+export const revParseQuery = async ({ input }: { input: RevParseInput }): Promise<RevParseOutput> => {
+  const git = simpleGit(input.path || process.cwd());
+  const hash = await git.revparse([input.ref]);
+
+  return {
+    hash: hash.trim(),
   };
 };

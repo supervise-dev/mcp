@@ -375,3 +375,71 @@ export const createTagOutput = z.object({
 
 export type CreateTagInput = z.infer<typeof createTagInput>;
 export type CreateTagOutput = z.infer<typeof createTagOutput>;
+
+// Fetch
+export const fetchInput = z.object({
+  path: z.string().optional().describe("The repository path (defaults to current directory)"),
+  remote: z.string().optional().describe("Remote name to fetch from (defaults to 'origin')"),
+  options: z
+    .object({
+      all: z.boolean().optional().describe("Fetch all remotes"),
+      prune: z.boolean().optional().describe("Remove remote-tracking references that no longer exist on the remote"),
+    })
+    .optional()
+    .describe("Optional configuration for fetch operation"),
+});
+
+export const fetchOutput = z.object({
+  success: z.boolean().describe("Whether the fetch was successful"),
+  remote: z.string().describe("Remote that was fetched"),
+});
+
+export type FetchInput = z.infer<typeof fetchInput>;
+export type FetchOutput = z.infer<typeof fetchOutput>;
+
+// Rebase
+export const rebaseInput = z.object({
+  path: z.string().optional().describe("The repository path (defaults to current directory)"),
+  onto: z.string().describe("Branch or commit to rebase onto"),
+  options: z
+    .object({
+      interactive: z.boolean().optional().describe("Start an interactive rebase (not recommended for automation)"),
+      abort: z.boolean().optional().describe("Abort an in-progress rebase"),
+      continue: z.boolean().optional().describe("Continue an in-progress rebase after resolving conflicts"),
+      skip: z.boolean().optional().describe("Skip the current commit and continue rebase"),
+    })
+    .optional()
+    .describe("Optional configuration for rebase operation"),
+});
+
+export const rebaseOutput = z.object({
+  success: z.boolean().describe("Whether the rebase was successful"),
+  conflicts: z
+    .array(
+      z.object({
+        reason: z.string().describe("Reason for the conflict"),
+        file: z.string().nullable().describe("File with conflict, if applicable"),
+        meta: z.any().optional().describe("Additional metadata about the conflict"),
+      }),
+    )
+    .optional()
+    .describe("List of conflicts if rebase stopped"),
+  currentCommit: z.string().optional().describe("Current commit being rebased (if stopped)"),
+  completed: z.boolean().describe("Whether the rebase completed fully"),
+});
+
+export type RebaseInput = z.infer<typeof rebaseInput>;
+export type RebaseOutput = z.infer<typeof rebaseOutput>;
+
+// Rev Parse (for getting commit info)
+export const revParseInput = z.object({
+  path: z.string().optional().describe("The repository path (defaults to current directory)"),
+  ref: z.string().describe("Git reference to parse (branch name, HEAD, etc.)"),
+});
+
+export const revParseOutput = z.object({
+  hash: z.string().describe("The commit hash"),
+});
+
+export type RevParseInput = z.infer<typeof revParseInput>;
+export type RevParseOutput = z.infer<typeof revParseOutput>;

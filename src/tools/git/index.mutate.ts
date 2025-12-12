@@ -9,6 +9,8 @@ import {
   CommitOutput,
   CreateTagInput,
   CreateTagOutput,
+  FetchInput,
+  FetchOutput,
   InitInput,
   InitOutput,
   MergeInput,
@@ -17,6 +19,8 @@ import {
   PullOutput,
   PushInput,
   PushOutput,
+  RebaseInput,
+  RebaseOutput,
 } from "./index.types";
 import simpleGit from "simple-git";
 
@@ -191,4 +195,59 @@ export const createTagMutation = async ({ input }: { input: CreateTagInput }): P
     success: true,
     tag: input.name,
   };
+};
+
+export const fetchMutation = async ({ input }: { input: FetchInput }): Promise<FetchOutput> => {
+  const git = simpleGit(input.path || process.cwd());
+  const remote = input.remote || "origin";
+
+  if (input.options?.all) {
+    await git.fetch(["--all", ...(input.options?.prune ? ["--prune"] : [])]);
+  } else {
+    await git.fetch(remote, input.options?.prune ? ["--prune"] : []);
+  }
+
+  return {
+    success: true,
+    remote,
+  };
+};
+
+export const rebaseMutation = async ({ input }: { input: RebaseInput }): Promise<RebaseOutput> => {
+  const git = simpleGit(input.path || process.cwd());
+
+  try {
+    if (input.options?.abort) {
+      await git.rebase(["--abort"]);
+      return { success: true, completed: false, conflicts: [] };
+    }
+
+    if (input.options?.continue) {
+      await git.rebase(["--continue"]);
+      return { success: true, completed: true, conflicts: [] };
+    }
+
+    if (input.options?.skip) {
+      await git.rebase(["--skip"]);
+      return { success: true, completed: true, conflicts: [] };
+    }
+
+    await git.rebase([input.onto]);
+    return { success: true, completed: true, conflicts: [] };
+  } catch (error: any) {
+    const status = await git.status();
+
+    if (status.conflicted.length > 0) {
+      return {
+        success: false,
+        completed: false,
+        conflicts: status.conflicted.map((file) => ({
+          reason: "content conflict",
+          file,
+        })),
+      };
+    }
+
+    throw error;
+  }
 };

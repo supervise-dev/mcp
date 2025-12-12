@@ -4,12 +4,14 @@ import {
   cloneMutation,
   commitMutation,
   createTagMutation,
+  fetchMutation,
   initMutation,
   mergeMutation,
   pullMutation,
   pushMutation,
+  rebaseMutation,
 } from "./index.mutate";
-import { branchQuery, diffQuery, logQuery, remoteQuery, statusQuery, tagQuery } from "./index.query";
+import { branchQuery, diffQuery, logQuery, remoteQuery, revParseQuery, statusQuery, tagQuery } from "./index.query";
 import {
   addInput,
   addOutput,
@@ -25,6 +27,8 @@ import {
   createTagOutput,
   diffInput,
   diffOutput,
+  fetchInput,
+  fetchOutput,
   initInput,
   initOutput,
   logInput,
@@ -35,8 +39,12 @@ import {
   pullOutput,
   pushInput,
   pushOutput,
+  rebaseInput,
+  rebaseOutput,
   remoteInput,
   remoteOutput,
+  revParseInput,
+  revParseOutput,
   statusInput,
   statusOutput,
   tagInput,
@@ -194,15 +202,47 @@ export const createTagTool = createTool({
   },
 });
 
+export const fetchTool = createTool({
+  id: "git.fetch",
+  description: "Fetch branches and/or tags from remote repository",
+  inputSchema: fetchInput,
+  outputSchema: fetchOutput,
+  execute: async ({ context }) => {
+    return fetchMutation({ input: context });
+  },
+});
+
+export const rebaseTool = createTool({
+  id: "git.rebase",
+  description: "Rebase current branch onto another branch or commit",
+  inputSchema: rebaseInput,
+  outputSchema: rebaseOutput,
+  execute: async ({ context }) => {
+    return rebaseMutation({ input: context });
+  },
+});
+
+export const revParseTool = createTool({
+  id: "git.revParse",
+  description: "Get the commit hash for a git reference",
+  inputSchema: revParseInput,
+  outputSchema: revParseOutput,
+  execute: async ({ context }) => {
+    return revParseQuery({ input: context });
+  },
+});
+
 export {
   addMutation,
   checkoutMutation,
   cloneMutation,
   commitMutation,
   createTagMutation,
+  fetchMutation,
   initMutation,
   mergeMutation,
   pullMutation,
   pushMutation,
+  rebaseMutation,
 } from "./index.mutate";
-export { branchQuery, diffQuery, logQuery, remoteQuery, statusQuery, tagQuery } from "./index.query";
+export { branchQuery, diffQuery, logQuery, remoteQuery, revParseQuery, statusQuery, tagQuery } from "./index.query";
