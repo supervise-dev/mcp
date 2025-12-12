@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "postinstall": "bun run build",
-    "build:mastra": "bunx mastra build --dir src",
+    "build:mastra": "mastra build --dir src --debug",
     "build:compile": "bun build .mastra/output/index.mjs --compile --external @libsql/darwin-arm64 --external @libsql/darwin-x64 --external @libsql/linux-arm64-gnu --external @libsql/linux-x64-gnu --external vscode-ripgrep",
     "build": "bun run build:mastra && bun run build:compile --outfile ./dist/mcp --target bun",
     "build:darwin-arm64": "bun run build:mastra && bun run build:compile --outfile ./dist/mcp-darwin-arm64 --target bun-darwin-arm64",
