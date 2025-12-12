@@ -53,11 +53,16 @@ export const mastra = new Mastra({
     },
     middleware: [
       {
+        // Fix duplicate Transfer-Encoding header from @mastra/mcp SSE streaming
+        // Mastra sets Transfer-Encoding: chunked but Bun adds it automatically for ReadableStream
+        // Solution: Delete it entirely and let Bun handle it at the HTTP layer
         path: "/api/mcp/*",
         handler: async (c, next) => {
-          c.header("X-Accel-Buffering", "no");
-          c.header("Cache-Control", "no-cache, no-transform");
           await next();
+          if (c.res) {
+            c.res.headers.delete("Transfer-Encoding");
+            c.res.headers.delete("transfer-encoding");
+          }
         },
       },
       {
@@ -74,7 +79,7 @@ export const mastra = new Mastra({
     ],
   },
   mcpServers: {
-    supervise: new MCPServer({
+    [getEnvOrThrow("SV_MCP_NAME")]: new MCPServer({
       name: getEnvOrThrow("SV_MCP_NAME"),
       version: version,
       tools: {
@@ -107,6 +112,7 @@ export const mastra = new Mastra({
         [grepFilesWithMatchesTool.id]: grepFilesWithMatchesTool,
         [grepCountMatchesTool.id]: grepCountMatchesTool,
       },
+      workflows: {},
     }),
   },
 });
