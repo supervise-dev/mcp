@@ -53,6 +53,14 @@ export const mastra = new Mastra({
     },
     middleware: [
       {
+        path: "/api/mcp/*",
+        handler: async (c, next) => {
+          c.header("X-Accel-Buffering", "no");
+          c.header("Cache-Control", "no-cache, no-transform");
+          await next();
+        },
+      },
+      {
         path: "/api/*",
         handler: jwk({
           jwks_uri: getEnvOrThrow("SV_MCP_JWK"),
