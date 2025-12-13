@@ -31,7 +31,7 @@ Best practices:
 - Include relevant metadata (size, type) when helpful
 - If you can't find a file, suggest alternative locations or names`,
   model: {
-    id: "openai/openai/gpt-4o",
+    id: "anthropic/anthropic/claude-haiku-4-5",
     apiKey: getEnvOrThrow("SV_MCP_GATEWAY_KEY"),
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },

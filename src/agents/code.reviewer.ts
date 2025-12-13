@@ -53,7 +53,7 @@ Output format:
 - Suggest specific fixes when possible
 - Highlight good practices found in the code`,
   model: {
-    id: "openai/openai/gpt-4o",
+    id: "anthropic/anthropic/claude-haiku-4-5",
     apiKey: getEnvOrThrow("SV_MCP_GATEWAY_KEY"),
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },

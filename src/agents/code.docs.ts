@@ -45,7 +45,7 @@ Output format:
 - Use proper markdown formatting
 - Include code examples with proper syntax highlighting`,
   model: {
-    id: "openai/openai/gpt-4o",
+    id: "anthropic/anthropic/claude-haiku-4-5",
     apiKey: getEnvOrThrow("SV_MCP_GATEWAY_KEY"),
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },

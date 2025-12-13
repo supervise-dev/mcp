@@ -60,7 +60,7 @@ Best practices:
 - Keep tests independent and isolated
 - Aim for high coverage of critical paths`,
   model: {
-    id: "openai/openai/gpt-4o",
+    id: "anthropic/anthropic/claude-haiku-4-5",
     apiKey: getEnvOrThrow("SV_MCP_GATEWAY_KEY"),
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
