@@ -186,31 +186,31 @@ console.log(output.stdout, output.exitCode);
 const results = await client.callTool("grep.search", {
   pattern: "function.*export",
   path: "/repo/src",
-  glob: "*.ts"
+  glob: "*.ts",
 });
 
 // AST-aware code search
 const functions = await client.callTool("grep.astGrep", {
   pattern: "function $NAME($$$) { $$$ }",
   path: "/repo/src",
-  lang: "typescript"
+  lang: "typescript",
 });
 
 // AI Agents
 const analysis = await client.runAgent("code.context", {
   query: "Explain the authentication flow in this codebase",
-  path: "/repo"
+  path: "/repo",
 });
 
 const review = await client.runAgent("code.reviewer", {
   files: ["src/auth.ts"],
-  path: "/repo"
+  path: "/repo",
 });
 
 const tests = await client.runAgent("code.tester", {
   file: "src/utils.ts",
   framework: "bun",
-  path: "/repo"
+  path: "/repo",
 });
 ```
 
@@ -298,6 +298,7 @@ src/
 ```
 
 Each tool module includes:
+
 - `index.ts` - Tool exports
 - `index.query.ts` - Read operations
 - `index.mutate.ts` - Write operations
@@ -307,19 +308,19 @@ Each tool module includes:
 
 ### Environment Variables
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `SV_MCP_PORT` | Server port (default: 1234) | No |
-| `SV_MCP_HOST` | Server host | No |
-| `SV_MCP_NAME` | MCP server name | No |
-| `SV_MCP_CORS` | CORS origin | No |
-| `SV_MCP_STORAGE` | LibSQL database URL | Yes |
-| `SV_MCP_GATEWAY` | OpenAI Gateway URL | Yes (for agents) |
-| `SV_MCP_GATEWAY_KEY` | OpenAI API key | Yes (for agents) |
-| `SV_MCP_JWK` | JWK URI for authentication | No |
-| `SV_MCP_JWK_ISS` | JWT issuer | No |
-| `SV_MCP_JWK_AUD` | JWT audience | No |
-| `SV_MCP_JWT_ALLOW_ANON` | Allow anonymous access | No |
+| Variable                | Description                 | Required         |
+| ----------------------- | --------------------------- | ---------------- |
+| `SV_MCP_PORT`           | Server port (default: 1234) | No               |
+| `SV_MCP_HOST`           | Server host                 | No               |
+| `SV_MCP_NAME`           | MCP server name             | No               |
+| `SV_MCP_CORS`           | CORS origin                 | No               |
+| `SV_MCP_STORAGE`        | LibSQL database URL         | Yes              |
+| `SV_MCP_GATEWAY`        | OpenAI Gateway URL          | Yes (for agents) |
+| `SV_MCP_GATEWAY_KEY`    | OpenAI API key              | Yes (for agents) |
+| `SV_MCP_JWK`            | JWK URI for authentication  | No               |
+| `SV_MCP_JWK_ISS`        | JWT issuer                  | No               |
+| `SV_MCP_JWK_AUD`        | JWT audience                | No               |
+| `SV_MCP_JWT_ALLOW_ANON` | Allow anonymous access      | No               |
 
 ## MCP Protocol
 
