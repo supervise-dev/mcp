@@ -1,4 +1,4 @@
-import { directoryTreeTool, readFileTool, readdirTool, statTool, writeFileTool } from "@/tools/fs";
+import { readFileTool, readdirTool, statTool, writeFileTool } from "@/tools/fs";
 import { grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
@@ -21,9 +21,8 @@ Your capabilities:
 When documenting code:
 1. Use readFile to understand the code being documented
 2. Use grep.search to find related code and usage examples
-3. Use directoryTree to visualize the project structure for documentation organization (useful for README and API docs)
-4. Use readdir to list specific directory contents
-5. Use writeFile to add or update documentation (when requested)
+3. Use readdir to list directory contents and explore project structure
+4. Use writeFile to add or update documentation (when requested)
 
 Documentation standards:
 - JSDoc/TSDoc: @param, @returns, @throws, @example, @see
@@ -50,7 +49,6 @@ Output format:
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
   tools: {
-    directoryTreeTool,
     readFileTool,
     readdirTool,
     statTool,

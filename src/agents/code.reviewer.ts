@@ -1,4 +1,4 @@
-import { directoryTreeTool, readFileTool, readdirTool, statTool } from "@/tools/fs";
+import { readFileTool, readdirTool, statTool } from "@/tools/fs";
 import { grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
@@ -22,7 +22,7 @@ Your capabilities:
 When reviewing code:
 1. Use readFile to examine the code in detail
 2. Use grep.search for text-based pattern matching
-3. Use directoryTree to get a hierarchical view of the project structure
+3. Use readdir to explore the project structure
 4. Check for consistency with existing code patterns
 
 Patterns to search with grep:
@@ -53,7 +53,6 @@ Output format:
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
   tools: {
-    directoryTreeTool,
     readFileTool,
     readdirTool,
     statTool,

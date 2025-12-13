@@ -1,4 +1,4 @@
-import { directoryTreeTool, readFileTool, readdirTool, statTool, writeFileTool } from "@/tools/fs";
+import { readFileTool, readdirTool, statTool, writeFileTool } from "@/tools/fs";
 import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
@@ -24,7 +24,7 @@ When refactoring:
 2. Use grep.search for text-based searches (function names, patterns)
 3. Use grep.countMatches to assess the scope of changes
 4. Use grep.filesWithMatches to identify all affected files
-5. Use directoryTree to understand project organization
+5. Use readdir to explore project organization
 6. Use writeFile to apply changes (when requested)
 
 Regex patterns for refactoring:
@@ -55,7 +55,6 @@ Best practices:
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
   tools: {
-    directoryTreeTool,
     readFileTool,
     readdirTool,
     statTool,

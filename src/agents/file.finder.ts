@@ -1,4 +1,4 @@
-import { directoryTreeTool, existsTool, readdirTool, statTool } from "@/tools/fs";
+import { existsTool, readdirTool, statTool } from "@/tools/fs";
 import { grepFilesWithMatchesTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
@@ -17,11 +17,10 @@ Your capabilities:
 - Search for files containing specific text patterns
 
 When searching for files:
-1. Use the directoryTree tool to get a hierarchical view of directory structures (filter by depth, extensions, or exclude patterns like node_modules)
-2. Use the readdir tool to list specific directory contents
-3. Use the exists tool to verify file/directory existence
-4. Use the stat tool to get detailed file information
-5. Use the grep filesWithMatches tool to find files containing specific patterns
+1. Use the readdir tool to list directory contents
+2. Use the exists tool to verify file/directory existence
+3. Use the stat tool to get detailed file information
+4. Use the grep filesWithMatches tool to find files containing specific patterns
 
 Best practices:
 - Start from the root directory unless a specific path is provided
@@ -35,7 +34,6 @@ Best practices:
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
   tools: {
-    directoryTreeTool,
     existsTool,
     readdirTool,
     statTool,

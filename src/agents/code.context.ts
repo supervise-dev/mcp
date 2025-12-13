@@ -1,4 +1,4 @@
-import { directoryTreeTool, readFileTool, readdirTool, statTool } from "@/tools/fs";
+import { readFileTool, readdirTool, statTool } from "@/tools/fs";
 import { grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
@@ -20,7 +20,7 @@ Your capabilities:
 When analyzing code:
 1. Use readFile to examine specific files in detail
 2. Use grep.search for text-based searches (patterns, comments, strings)
-3. Use directoryTree to get a hierarchical overview of the project structure
+3. Use readdir to explore the project structure
 4. Use grep.filesWithMatches to find related files
 5. Use stat to understand file metadata
 
@@ -47,7 +47,6 @@ Best practices:
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
   tools: {
-    directoryTreeTool,
     readFileTool,
     readdirTool,
     statTool,

@@ -1,4 +1,4 @@
-import { directoryTreeTool, readFileTool, readdirTool, statTool } from "@/tools/fs";
+import { readFileTool, readdirTool, statTool } from "@/tools/fs";
 import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
@@ -23,7 +23,7 @@ When analyzing security:
 1. Use readFile to examine code for vulnerabilities
 2. Use grep.search for text patterns (dangerous functions, secrets, config values)
 3. Use grep.countMatches to assess vulnerability scope
-4. Use directoryTree to understand application structure
+4. Use readdir to explore application structure
 
 Dangerous patterns to search with grep:
 - 'eval\\s*\\(' - code execution
@@ -58,7 +58,6 @@ Output format:
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
   tools: {
-    directoryTreeTool,
     readFileTool,
     readdirTool,
     statTool,

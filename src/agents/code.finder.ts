@@ -1,4 +1,4 @@
-import { directoryTreeTool, readFileTool, readdirTool, statTool } from "@/tools/fs";
+import { readFileTool, readdirTool, statTool } from "@/tools/fs";
 import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
@@ -23,7 +23,7 @@ When searching for code:
 2. Use grep.filesWithMatches to quickly identify which files contain a pattern
 3. Use grep.countMatches to understand pattern distribution across files
 4. Use readFile to examine specific files in detail
-5. Use directoryTree to get a hierarchical view of project structure
+5. Use readdir to explore project structure
 
 Regex pattern examples:
 - Find function definitions: 'function\\s+\\w+'
@@ -43,7 +43,6 @@ Best practices:
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
   tools: {
-    directoryTreeTool,
     grepSearchTool,
     grepFilesWithMatchesTool,
     grepCountMatchesTool,

@@ -1,4 +1,4 @@
-import { directoryTreeTool, existsTool, readFileTool, readdirTool, statTool } from "@/tools/fs";
+import { existsTool, readFileTool, readdirTool, statTool } from "@/tools/fs";
 import { grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { execTool } from "@/tools/process";
 import { getEnvOrThrow } from "@/utils/env";
@@ -26,7 +26,7 @@ When analyzing dependencies:
 3. Use grep.filesWithMatches to find files using specific packages
 4. Use exec to run package manager commands (npm ls, pip list)
 5. Use exists to check for lock files
-6. Use directoryTree to visualize the project structure
+6. Use readdir to explore the project structure
 
 Regex patterns for dependency analysis:
 - Find ES6 imports: 'import.*from'
@@ -59,7 +59,6 @@ Output format:
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
   tools: {
-    directoryTreeTool,
     readFileTool,
     readdirTool,
     statTool,

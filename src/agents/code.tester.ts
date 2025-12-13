@@ -1,4 +1,4 @@
-import { directoryTreeTool, readFileTool, readdirTool, statTool, writeFileTool } from "@/tools/fs";
+import { readFileTool, readdirTool, statTool, writeFileTool } from "@/tools/fs";
 import { grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { execTool } from "@/tools/process";
 import { getEnvOrThrow } from "@/utils/env";
@@ -24,7 +24,7 @@ When generating tests:
 1. Use readFile to understand the code being tested
 2. Use grep.search to find functions, classes, and patterns to test
 3. Use grep.search for existing test patterns and conventions
-4. Use directoryTree to locate test directories
+4. Use readdir to locate test directories
 5. Use exec to run tests and check results
 6. Use writeFile to create test files (when requested)
 
@@ -62,7 +62,6 @@ Best practices:
     url: getEnvOrThrow("SV_MCP_GATEWAY"),
   },
   tools: {
-    directoryTreeTool,
     readFileTool,
     readdirTool,
     statTool,
