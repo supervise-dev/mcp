@@ -57,8 +57,8 @@ export const statusTool = createTool({
   description: "Get the current status of a git repository including staged, modified, and untracked files",
   inputSchema: statusInput,
   outputSchema: statusOutput,
-  execute: async ({ context }) => {
-    return statusQuery({ input: context });
+  execute: async (input, context) => {
+    return statusQuery({ input });
   },
 });
 
@@ -67,8 +67,8 @@ export const logTool = createTool({
   description: "Get commit history from a git repository with optional filtering",
   inputSchema: logInput,
   outputSchema: logOutput,
-  execute: async ({ context }) => {
-    return logQuery({ input: context });
+  execute: async (input, context) => {
+    return logQuery({ input });
   },
 });
 
@@ -77,8 +77,8 @@ export const diffTool = createTool({
   description: "Show differences between commits, branches, or working tree",
   inputSchema: diffInput,
   outputSchema: diffOutput,
-  execute: async ({ context }) => {
-    return diffQuery({ input: context });
+  execute: async (input, context) => {
+    return diffQuery({ input });
   },
 });
 
@@ -87,8 +87,8 @@ export const branchTool = createTool({
   description: "List all branches in the repository and show the current branch",
   inputSchema: branchInput,
   outputSchema: branchOutput,
-  execute: async ({ context }) => {
-    return branchQuery({ input: context });
+  execute: async (input, context) => {
+    return branchQuery({ input });
   },
 });
 
@@ -97,8 +97,8 @@ export const remoteTool = createTool({
   description: "List all remote repositories configured for the local repository",
   inputSchema: remoteInput,
   outputSchema: remoteOutput,
-  execute: async ({ context }) => {
-    return remoteQuery({ input: context });
+  execute: async (input, context) => {
+    return remoteQuery({ input });
   },
 });
 
@@ -107,8 +107,8 @@ export const tagTool = createTool({
   description: "List all tags in the repository",
   inputSchema: tagInput,
   outputSchema: tagOutput,
-  execute: async ({ context }) => {
-    return tagQuery({ input: context });
+  execute: async (input, context) => {
+    return tagQuery({ input });
   },
 });
 
@@ -117,8 +117,8 @@ export const initTool = createTool({
   description: "Initialize a new git repository at the specified path",
   inputSchema: initInput,
   outputSchema: initOutput,
-  execute: async ({ context }) => {
-    return initMutation({ input: context });
+  execute: async (input, context) => {
+    return initMutation({ input });
   },
 });
 
@@ -127,8 +127,8 @@ export const cloneTool = createTool({
   description: "Clone a remote git repository to a local path with optional depth and branch settings",
   inputSchema: cloneInput,
   outputSchema: cloneOutput,
-  execute: async ({ context }) => {
-    return cloneMutation({ input: context });
+  execute: async (input, context) => {
+    return cloneMutation({ input });
   },
 });
 
@@ -137,8 +137,8 @@ export const addTool = createTool({
   description: "Add files to the staging area for the next commit",
   inputSchema: addInput,
   outputSchema: addOutput,
-  execute: async ({ context }) => {
-    return addMutation({ input: context });
+  execute: async (input, context) => {
+    return addMutation({ input });
   },
 });
 
@@ -147,8 +147,8 @@ export const commitTool = createTool({
   description: "Create a new commit with staged changes and a commit message",
   inputSchema: commitInput,
   outputSchema: commitOutput,
-  execute: async ({ context }) => {
-    return commitMutation({ input: context });
+  execute: async (input, context) => {
+    return commitMutation({ input });
   },
 });
 
@@ -157,8 +157,8 @@ export const pushTool = createTool({
   description: "Push local commits to a remote repository",
   inputSchema: pushInput,
   outputSchema: pushOutput,
-  execute: async ({ context }) => {
-    return pushMutation({ input: context });
+  execute: async (input, context) => {
+    return pushMutation({ input });
   },
 });
 
@@ -167,8 +167,8 @@ export const pullTool = createTool({
   description: "Pull changes from a remote repository and merge them into the current branch",
   inputSchema: pullInput,
   outputSchema: pullOutput,
-  execute: async ({ context }) => {
-    return pullMutation({ input: context });
+  execute: async (input, context) => {
+    return pullMutation({ input });
   },
 });
 
@@ -177,8 +177,8 @@ export const checkoutTool = createTool({
   description: "Switch to a different branch or create a new branch",
   inputSchema: checkoutInput,
   outputSchema: checkoutOutput,
-  execute: async ({ context }) => {
-    return checkoutMutation({ input: context });
+  execute: async (input, context) => {
+    return checkoutMutation({ input });
   },
 });
 
@@ -187,8 +187,8 @@ export const mergeTool = createTool({
   description: "Merge changes from another branch into the current branch",
   inputSchema: mergeInput,
   outputSchema: mergeOutput,
-  execute: async ({ context }) => {
-    return mergeMutation({ input: context });
+  execute: async (input, context) => {
+    return mergeMutation({ input });
   },
 });
 
@@ -197,8 +197,8 @@ export const createTagTool = createTool({
   description: "Create a new tag at the current commit with optional message",
   inputSchema: createTagInput,
   outputSchema: createTagOutput,
-  execute: async ({ context }) => {
-    return createTagMutation({ input: context });
+  execute: async (input, context) => {
+    return createTagMutation({ input });
   },
 });
 
@@ -207,8 +207,8 @@ export const fetchTool = createTool({
   description: "Fetch branches and/or tags from remote repository",
   inputSchema: fetchInput,
   outputSchema: fetchOutput,
-  execute: async ({ context }) => {
-    return fetchMutation({ input: context });
+  execute: async (input, context) => {
+    return fetchMutation({ input });
   },
 });
 
@@ -217,8 +217,8 @@ export const rebaseTool = createTool({
   description: "Rebase current branch onto another branch or commit",
   inputSchema: rebaseInput,
   outputSchema: rebaseOutput,
-  execute: async ({ context }) => {
-    return rebaseMutation({ input: context });
+  execute: async (input, context) => {
+    return rebaseMutation({ input });
   },
 });
 
@@ -227,8 +227,8 @@ export const revParseTool = createTool({
   description: "Get the commit hash for a git reference",
   inputSchema: revParseInput,
   outputSchema: revParseOutput,
-  execute: async ({ context }) => {
-    return revParseQuery({ input: context });
+  execute: async (input, context) => {
+    return revParseQuery({ input });
   },
 });
 

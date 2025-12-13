@@ -6,9 +6,10 @@ on:
       - master
       - develop
     paths:
-      - '.github/workflows/bridge-binaries.yml'
-      - 'src/**'
-      - 'package.json'
+      - ".github/workflows/bridge-binaries.yml"
+      - "src/**"
+      - "package.json"
+      - "bun.build.ts"
   workflow_dispatch:
 
 jobs:
@@ -45,7 +46,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build MCP binary
-        run: bun run build:${{ matrix.target }}
+        run: bun bun.build.ts mastra --debug && bun bun.build.ts compile --target=${{ matrix.target }}
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4

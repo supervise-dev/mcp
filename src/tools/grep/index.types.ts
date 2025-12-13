@@ -97,3 +97,54 @@ export type FilesWithMatchesOutput = z.infer<typeof filesWithMatchesOutput>;
 export type CountMatchesInput = z.infer<typeof countMatchesInput>;
 export type FileCountOutput = z.infer<typeof fileCountOutput>;
 export type CountMatchesOutput = z.infer<typeof countMatchesOutput>;
+
+// AST-Grep types for structural code search (using @ast-grep/napi JS API)
+export const astGrepInput = z.object({
+  pattern: z
+    .string()
+    .describe("The structural pattern to search for (e.g., 'console.log($$$)', 'function $NAME($$$) { $$$ }')"),
+  path: z.string().optional().describe("The directory or file path to search in (defaults to current directory)"),
+  lang: z
+    .enum(["ts", "tsx", "js", "jsx", "html", "css"])
+    .optional()
+    .describe("Language to parse (defaults to 'ts' for TypeScript). Use 'tsx' for React/JSX files"),
+  options: z
+    .object({
+      json: z.boolean().optional().describe("Output results in JSON format (default: true)"),
+      rewrite: z.string().optional().describe("Rewrite matched code with the given pattern"),
+      strictness: z
+        .enum(["cst", "smart", "ast", "relaxed", "signature"])
+        .optional()
+        .describe("Set pattern strictness level"),
+    })
+    .optional()
+    .describe("Optional configuration for ast-grep"),
+});
+
+export const astGrepMatchOutput = z.object({
+  file: z.string().describe("Path to the file containing the match"),
+  range: z
+    .object({
+      start: z.object({
+        line: z.number().describe("Start line number (0-indexed)"),
+        column: z.number().describe("Start column number"),
+      }),
+      end: z.object({
+        line: z.number().describe("End line number (0-indexed)"),
+        column: z.number().describe("End column number"),
+      }),
+    })
+    .describe("Range of the match in the file"),
+  matchedCode: z.string().describe("The matched code snippet"),
+  replacement: z.string().optional().describe("The replacement text if rewrite was specified"),
+});
+
+export const astGrepOutput = z.object({
+  matches: z.array(astGrepMatchOutput).describe("Array of structural code matches"),
+  totalMatches: z.number().describe("Total number of matches found"),
+  language: z.string().describe("Language used for parsing"),
+});
+
+export type AstGrepInput = z.infer<typeof astGrepInput>;
+export type AstGrepMatchOutput = z.infer<typeof astGrepMatchOutput>;
+export type AstGrepOutput = z.infer<typeof astGrepOutput>;

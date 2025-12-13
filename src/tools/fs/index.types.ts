@@ -179,3 +179,77 @@ export type WriteFileOutput = z.infer<typeof writeFileOutput>;
 export type FileSizeOutput = z.infer<typeof fileSizeOutput>;
 export type DeleteOutput = z.infer<typeof deleteOutput>;
 export type Dirent = z.infer<typeof direntOutput>;
+
+// Directory Tree types
+export const directoryTreeInput = z.object({
+  path: z.string().describe("The root directory path to generate the tree from"),
+  options: z
+    .object({
+      normalizePath: z.boolean().optional().describe("Normalize path separators to forward slashes"),
+      exclude: z
+        .union([z.string(), z.array(z.string())])
+        .optional()
+        .describe("Regex pattern(s) to exclude paths (e.g., 'node_modules' or ['node_modules', '.git'])"),
+      extensions: z.string().optional().describe("Regex pattern to filter by file extensions (e.g., '\\\\.(js|ts)$')"),
+      followSymlinks: z.boolean().optional().describe("Follow symbolic links"),
+      depth: z.number().optional().describe("Maximum depth to traverse (-1 for unlimited)"),
+      attributes: z
+        .array(
+          z.enum([
+            "type",
+            "extension",
+            "size",
+            "mode",
+            "nlink",
+            "uid",
+            "gid",
+            "ino",
+            "dev",
+            "rdev",
+            "blksize",
+            "blocks",
+            "atimeMs",
+            "mtimeMs",
+            "ctimeMs",
+            "birthtimeMs",
+            "atime",
+            "mtime",
+            "ctime",
+            "birthtime",
+          ]),
+        )
+        .optional()
+        .describe("Additional attributes to include in the output"),
+    })
+    .optional()
+    .describe("Optional configuration for directory tree generation"),
+});
+
+const directoryTreeNodeSchema: z.ZodType<DirectoryTreeNode> = z.lazy(() =>
+  z.object({
+    path: z.string().describe("Full path to the file or directory"),
+    name: z.string().describe("Name of the file or directory"),
+    size: z.number().describe("Size in bytes"),
+    type: z.enum(["directory", "file"]).describe("Whether this is a file or directory"),
+    children: z.array(directoryTreeNodeSchema).optional().describe("Child files and directories"),
+    extension: z.string().optional().describe("File extension (for files)"),
+    isSymbolicLink: z.boolean().optional().describe("Whether this is a symbolic link"),
+  }),
+);
+
+export const directoryTreeOutput = z.object({
+  tree: directoryTreeNodeSchema.nullable().describe("The directory tree structure, null if path doesn't exist"),
+});
+
+export interface DirectoryTreeNode {
+  path: string;
+  name: string;
+  size: number;
+  type: "directory" | "file";
+  children?: DirectoryTreeNode[];
+  extension?: string;
+  isSymbolicLink?: boolean;
+}
+
+export type DirectoryTreeInput = z.infer<typeof directoryTreeInput>;
+export type DirectoryTreeOutput = z.infer<typeof directoryTreeOutput>;

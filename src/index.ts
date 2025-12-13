@@ -8,6 +8,7 @@ import {
   createTagTool,
   deleteTool,
   diffTool,
+  directoryTreeTool,
   execTool,
   existsTool,
   fileSizeTool,
@@ -26,9 +27,18 @@ import {
   tagTool,
   writeFileTool,
 } from "./tools";
-import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "./tools";
+import { astGrepTool, grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "./tools";
 import { getEnvOrThrow } from "./utils/env";
-import { gitSyncWorkflow } from "@/workflows/git/sync";
+import { codeContextAgent } from "@/agents/code.context";
+import { codeDependencyAgent } from "@/agents/code.dependency";
+import { codeDocsAgent } from "@/agents/code.docs";
+import { codeFinderAgent } from "@/agents/code.finder";
+import { codeRefactorAgent } from "@/agents/code.refactor";
+import { codeReviewerAgent } from "@/agents/code.reviewer";
+import { codeSecurityAgent } from "@/agents/code.security";
+import { codeTesterAgent } from "@/agents/code.tester";
+import { fileFinderAgent } from "@/agents/file.finder";
+import { gitContextAgent } from "@/agents/git.context";
 import { Mastra } from "@mastra/core";
 import { LibSQLStore } from "@mastra/libsql";
 import { PinoLogger } from "@mastra/loggers";
@@ -36,7 +46,20 @@ import { MCPServer } from "@mastra/mcp";
 import { jwk } from "hono/jwk";
 
 export const mastra = new Mastra({
+  agents: {
+    fileFinderAgent,
+    codeFinderAgent,
+    codeContextAgent,
+    codeReviewerAgent,
+    codeRefactorAgent,
+    codeDocsAgent,
+    codeTesterAgent,
+    codeSecurityAgent,
+    codeDependencyAgent,
+    gitContextAgent,
+  },
   storage: new LibSQLStore({
+    id: "storage",
     url: getEnvOrThrow("SV_MCP_STORAGE"),
   }),
   logger: new PinoLogger({
@@ -48,9 +71,9 @@ export const mastra = new Mastra({
     port: getEnvOrThrow("SV_MCP_PORT", Number),
     cors: {
       origin: [getEnvOrThrow("SV_MCP_CORS")],
+      credentials: false,
       allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
       allowHeaders: ["Content-Type", "Authorization"],
-      credentials: false,
     },
     middleware: [
       {
@@ -81,8 +104,21 @@ export const mastra = new Mastra({
   },
   mcpServers: {
     [getEnvOrThrow("SV_MCP_NAME")]: new MCPServer({
-      name: getEnvOrThrow("SV_MCP_NAME"),
       version: version,
+      id: getEnvOrThrow("SV_MCP_NAME"),
+      name: getEnvOrThrow("SV_MCP_NAME"),
+      agents: {
+        fileFinderAgent,
+        codeFinderAgent,
+        codeContextAgent,
+        codeReviewerAgent,
+        codeRefactorAgent,
+        codeDocsAgent,
+        codeTesterAgent,
+        codeSecurityAgent,
+        codeDependencyAgent,
+        gitContextAgent,
+      },
       tools: {
         [existsTool.id]: existsTool,
         [mkdirTool.id]: mkdirTool,
@@ -92,6 +128,7 @@ export const mastra = new Mastra({
         [writeFileTool.id]: writeFileTool,
         [fileSizeTool.id]: fileSizeTool,
         [deleteTool.id]: deleteTool,
+        [directoryTreeTool.id]: directoryTreeTool,
         [spawnTool.id]: spawnTool,
         [execTool.id]: execTool,
         [statusTool.id]: statusTool,
@@ -112,10 +149,17 @@ export const mastra = new Mastra({
         [grepSearchTool.id]: grepSearchTool,
         [grepFilesWithMatchesTool.id]: grepFilesWithMatchesTool,
         [grepCountMatchesTool.id]: grepCountMatchesTool,
-      },
-      workflows: {
-        gitSyncWorkflow,
+        [astGrepTool.id]: astGrepTool,
       },
     }),
+  },
+  bundler: {
+    externals: [
+      "@ast-grep/napi",
+      "@libsql/darwin-arm64",
+      "@libsql/darwin-x64",
+      "@libsql/linux-arm64-gnu",
+      "@libsql/linux-x64-gnu",
+    ],
   },
 });

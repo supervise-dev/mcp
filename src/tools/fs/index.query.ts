@@ -1,4 +1,7 @@
 import {
+  DirectoryTreeInput,
+  DirectoryTreeNode,
+  DirectoryTreeOutput,
   ExistsOutput,
   ExistsSyncInput,
   FileSizeOutput,
@@ -10,6 +13,7 @@ import {
   StatOutput,
   StatSyncInput,
 } from "./index.types";
+import directoryTree from "directory-tree";
 import fs from "node:fs/promises";
 
 export const existsQuery = async ({ input }: { input: ExistsSyncInput }): Promise<ExistsOutput> => {
@@ -78,4 +82,44 @@ export const statQuery = async ({ input }: { input: StatSyncInput }): Promise<St
 export const fileSizeQuery = async ({ input }: { input: FileSizeSyncInput }): Promise<FileSizeOutput> => {
   const stats = await fs.stat(input.path);
   return { size: stats.size };
+};
+
+export const directoryTreeQuery = async ({ input }: { input: DirectoryTreeInput }): Promise<DirectoryTreeOutput> => {
+  const options: Parameters<typeof directoryTree>[1] = {};
+
+  if (input.options) {
+    if (input.options.normalizePath !== undefined) {
+      options.normalizePath = input.options.normalizePath;
+    }
+    if (input.options.exclude !== undefined) {
+      const patterns = Array.isArray(input.options.exclude) ? input.options.exclude : [input.options.exclude];
+      options.exclude = patterns.map((p) => new RegExp(p));
+    }
+    if (input.options.extensions !== undefined) {
+      options.extensions = new RegExp(input.options.extensions);
+    }
+    if (input.options.followSymlinks !== undefined) {
+      options.followSymlinks = input.options.followSymlinks;
+    }
+    if (input.options.depth !== undefined) {
+      options.depth = input.options.depth;
+    }
+    if (input.options.attributes !== undefined) {
+      options.attributes = input.options.attributes as any;
+    }
+  }
+
+  const result = directoryTree(input.path, options);
+
+  // Transform to our output format (strip the 'custom' property)
+  const transformNode = (node: ReturnType<typeof directoryTree>): DirectoryTreeNode | null => {
+    if (!node) return null;
+    const { custom, ...rest } = node;
+    return {
+      ...rest,
+      children: rest.children?.map((child) => transformNode(child)!),
+    };
+  };
+
+  return { tree: transformNode(result) };
 };

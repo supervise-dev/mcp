@@ -7,8 +7,8 @@ export const spawnTool = createTool({
   description: "Spawn a new process with specified command and arguments, returning stdout, stderr, and exit code",
   inputSchema: spawnInput,
   outputSchema: processOutput,
-  execute: async ({ context }) => {
-    return spawnMutation({ input: context });
+  execute: async (input, context) => {
+    return spawnMutation({ input });
   },
 });
 
@@ -17,8 +17,8 @@ export const execTool = createTool({
   description: "Execute a shell command and return stdout, stderr, and exit code",
   inputSchema: execInput,
   outputSchema: processOutput,
-  execute: async ({ context }) => {
-    return execMutation({ input: context });
+  execute: async (input, context) => {
+    return execMutation({ input });
   },
 });
 
