@@ -11,6 +11,7 @@ interface CompileOptions {
 }
 
 const EXTERNAL_DEPENDENCIES = [
+  "@ast-grep/napi",
   "@libsql/darwin-arm64",
   "@libsql/darwin-x64",
   "@libsql/linux-arm64-gnu",
