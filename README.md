@@ -1,6 +1,6 @@
 # MCP Server
 
-A high-performance Model Context Protocol (MCP) server providing remote filesystem, git, and process operations. Built with Mastra and Bun for fast execution and distributed as compiled binaries for easy deployment.
+A high-performance Model Context Protocol (MCP) server providing remote filesystem, git, process operations, and AI-powered code analysis agents. Built with Mastra and Bun for fast execution and distributed as compiled binaries for easy deployment.
 
 ## Features
 
@@ -14,6 +14,7 @@ A high-performance Model Context Protocol (MCP) server providing remote filesyst
 - `fs.writeFile` - Write files (text and binary data)
 - `fs.fileSize` - Get file size
 - `fs.delete` - Delete files/directories (with recursive option)
+- `fs.directoryTree` - Generate hierarchical directory tree with filtering
 
 ### Git Operations
 
@@ -23,20 +24,45 @@ A high-performance Model Context Protocol (MCP) server providing remote filesyst
 - `git.branch` - List branches and show current branch
 - `git.remote` - List configured remote repositories
 - `git.tag` - List all repository tags
+- `git.revParse` - Resolve references to commit hashes
 - `git.init` - Initialize a new git repository
 - `git.clone` - Clone remote repository (with optional depth and branch)
 - `git.add` - Add files to staging area
 - `git.commit` - Create commit with staged changes
 - `git.push` - Push local commits to remote
 - `git.pull` - Pull and merge changes from remote
+- `git.fetch` - Fetch changes from remote
 - `git.checkout` - Switch or create branches
 - `git.merge` - Merge changes from another branch
+- `git.rebase` - Rebase branches
 - `git.createTag` - Create new tag at current commit
+
+### Search Operations
+
+- `grep.search` - Text pattern search using ripgrep with regex support
+- `grep.filesWithMatches` - Find files containing pattern
+- `grep.countMatches` - Count matches per file
+- `grep.astGrep` - AST-aware code pattern matching (TypeScript, TSX, JavaScript, JSX, HTML, CSS)
 
 ### Process Operations
 
 - `process.spawn` - Spawn a process with arguments and capture output
 - `process.exec` - Execute shell commands
+
+### AI Agents
+
+10 specialized AI agents powered by GPT-4o for code analysis:
+
+- **File Finder** - Locate files by name, pattern, or directory structure
+- **Code Finder** - Find specific code patterns, functions, classes, variables using AST and text search
+- **Code Context** - Analyze and explain code structure, architecture, and functionality
+- **Code Reviewer** - Review code for quality, best practices, bugs, and improvements
+- **Code Refactor** - Analyze and refactor code for structure, readability, maintainability
+- **Code Docs** - Generate documentation (JSDoc, TSDoc, docstrings, README, API docs)
+- **Code Tester** - Generate and analyze test cases (Jest, Vitest, Mocha, Bun test, pytest)
+- **Code Security** - Analyze code for security vulnerabilities (OWASP Top 10)
+- **Code Dependency** - Analyze project dependencies, detect circular imports, find unused packages
+- **Git Context** - Analyze Git repository state, resolve merge conflicts, provide Git expertise
 
 ### Key Capabilities
 
@@ -47,6 +73,10 @@ A high-performance Model Context Protocol (MCP) server providing remote filesyst
 - Cross-platform binary distribution (Linux x64/ARM64, macOS x64/ARM64)
 - NPM package for client library integration
 - Bun runtime for high performance
+- AST-aware code pattern matching with @ast-grep/napi
+- Fast text search with ripgrep integration
+- JWT authentication with JWK support
+- LibSQL storage layer
 
 ## Installation
 
@@ -151,17 +181,62 @@ await client.callTool("git.push", { repoPath: "/repo", remote: "origin", branch:
 // Process operations
 const output = await client.callTool("process.spawn", { command: ["ls", "-la"] });
 console.log(output.stdout, output.exitCode);
+
+// Search operations
+const results = await client.callTool("grep.search", {
+  pattern: "function.*export",
+  path: "/repo/src",
+  glob: "*.ts"
+});
+
+// AST-aware code search
+const functions = await client.callTool("grep.astGrep", {
+  pattern: "function $NAME($$$) { $$$ }",
+  path: "/repo/src",
+  lang: "typescript"
+});
+
+// AI Agents
+const analysis = await client.runAgent("code.context", {
+  query: "Explain the authentication flow in this codebase",
+  path: "/repo"
+});
+
+const review = await client.runAgent("code.reviewer", {
+  files: ["src/auth.ts"],
+  path: "/repo"
+});
+
+const tests = await client.runAgent("code.tester", {
+  file: "src/utils.ts",
+  framework: "bun",
+  path: "/repo"
+});
 ```
 
 ## API Reference
 
-All tools are invoked via `client.callTool(toolId, input)`. See the Features section above for complete tool listings.
+All tools are invoked via `client.callTool(toolId, input)`. AI agents are invoked via `client.runAgent(agentId, input)`. See the Features section above for complete tool and agent listings.
 
 **Common Input Patterns:**
 
 - Filesystem: `{ path: string, ...options }`
 - Git: `{ repoPath: string, ...options }`
 - Process: `{ command: string[], cwd?: string, env?: Record<string, string> }`
+- Search: `{ pattern: string, path?: string, glob?: string }`
+
+**AST-Grep Patterns:**
+
+Use `$VAR` for single nodes and `$$$` for multiple nodes:
+
+```
+function $NAME($$$) { $$$ }     # Match function definitions
+console.log($$$)                # Match console.log calls
+useState($INITIAL)              # Match React useState hooks
+try { $$$ } catch ($ERR) { $$$ } # Match try-catch blocks
+```
+
+**Supported Languages:** TypeScript, TSX, JavaScript, JSX, HTML, CSS
 
 **Process Output:**
 
@@ -197,7 +272,54 @@ bun run typecheck           # Run TypeScript check
 
 ## Architecture
 
-Built with modular design: Server (`src/index.ts`) handles HTTP/SSE, with separate modules for filesystem (`src/tools/fs/`), git (`src/tools/git/`), and process (`src/tools/process/`) operations. Each module includes query/mutation handlers and Zod type definitions.
+Built with modular design:
+
+```
+src/
+├── index.ts              # Main entry point with server configuration
+├── agents/               # 10 AI agents for code analysis
+│   ├── file.finder.ts    # File location agent
+│   ├── code.finder.ts    # Code pattern search agent
+│   ├── code.context.ts   # Code analysis agent
+│   ├── code.reviewer.ts  # Code review agent
+│   ├── code.refactor.ts  # Refactoring agent
+│   ├── code.docs.ts      # Documentation agent
+│   ├── code.tester.ts    # Test generation agent
+│   ├── code.security.ts  # Security analysis agent
+│   ├── code.dependency.ts # Dependency analysis agent
+│   └── git.context.ts    # Git analysis agent
+├── tools/
+│   ├── fs/               # Filesystem operations (9 tools)
+│   ├── git/              # Git operations (17 tools)
+│   ├── grep/             # Search operations (4 tools)
+│   └── process/          # Process operations (2 tools)
+└── utils/
+    └── env.ts            # Environment variable utilities
+```
+
+Each tool module includes:
+- `index.ts` - Tool exports
+- `index.query.ts` - Read operations
+- `index.mutate.ts` - Write operations
+- `index.types.ts` - Zod schema definitions
+
+## Configuration
+
+### Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `SV_MCP_PORT` | Server port (default: 1234) | No |
+| `SV_MCP_HOST` | Server host | No |
+| `SV_MCP_NAME` | MCP server name | No |
+| `SV_MCP_CORS` | CORS origin | No |
+| `SV_MCP_STORAGE` | LibSQL database URL | Yes |
+| `SV_MCP_GATEWAY` | OpenAI Gateway URL | Yes (for agents) |
+| `SV_MCP_GATEWAY_KEY` | OpenAI API key | Yes (for agents) |
+| `SV_MCP_JWK` | JWK URI for authentication | No |
+| `SV_MCP_JWK_ISS` | JWT issuer | No |
+| `SV_MCP_JWK_AUD` | JWT audience | No |
+| `SV_MCP_JWT_ALLOW_ANON` | Allow anonymous access | No |
 
 ## MCP Protocol
 
