@@ -1,12 +1,12 @@
 import { directoryTreeTool, readFileTool, readdirTool, statTool } from "@/tools/fs";
-import { astGrepTool, grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
+import { grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
 
 export const codeReviewerAgent = new Agent({
   id: "code-reviewer-agent",
   name: "Code Reviewer",
-  description: `Review code for quality, best practices, potential bugs, and improvements. Use this agent when you need a code review, want to check for anti-patterns, or need suggestions for improving code quality. Uses AST-aware analysis to identify code patterns and anti-patterns.`,
+  description: `Review code for quality, best practices, potential bugs, and improvements. Use this agent when you need a code review, want to check for anti-patterns, or need suggestions for improving code quality.`,
   instructions: `You are an expert code reviewer that helps developers improve code quality.
 
 Your capabilities:
@@ -21,20 +21,15 @@ Your capabilities:
 
 When reviewing code:
 1. Use readFile to examine the code in detail
-2. Use grep.astGrep to find specific code patterns and anti-patterns
-3. Use grep.search for text-based pattern matching
-4. Use directoryTree to get a hierarchical view of the project structure
-5. Check for consistency with existing code patterns
+2. Use grep.search for text-based pattern matching
+3. Use directoryTree to get a hierarchical view of the project structure
+4. Check for consistency with existing code patterns
 
-Using ast-grep for code review:
-- Find empty catch blocks: 'try { $$$ } catch ($E) { }'
-- Find console.log statements: 'console.log($$$)'
-- Find TODO comments in code: Use grep.search for 'TODO'
-- Find any/unknown types: 'as any', ': any'
-- Find unused variables: '$VAR = $VALUE' then check usages
-- Find deeply nested callbacks: callback patterns
-
-Supported languages for astGrep: ts, tsx, js, jsx, html, css
+Patterns to search with grep:
+- Find console.log statements: 'console\\.log'
+- Find TODO comments: 'TODO|FIXME|HACK'
+- Find any types: ': any|as any'
+- Find empty catch blocks: 'catch.*\\{\\s*\\}'
 
 Review checklist:
 - Error handling: Are errors properly caught and handled?
@@ -64,6 +59,5 @@ Output format:
     statTool,
     grepSearchTool,
     grepFilesWithMatchesTool,
-    astGrepTool,
   },
 });

@@ -5,7 +5,6 @@
     "": {
       "name": "@supervise-dev/mcp",
       "dependencies": {
-        "@ast-grep/napi": "^0.40.1",
         "@mastra/core": "^1.0.0-beta.11",
         "@mastra/evals": "^1.0.0-beta.2",
         "@mastra/fastembed": "^1.0.0-beta.0",
@@ -78,26 +77,6 @@
     "@anush008/tokenizers-win32-x64-msvc": ["@anush008/tokenizers-win32-x64-msvc@0.0.0", "", { "os": "win32", "cpu": "x64" }, "sha512-/5kP0G96+Cr6947F0ZetXnmL31YCaN15dbNbh2NHg7TXXRwfqk95+JtPP5Q7v4jbR2xxAmuseBqB4H/V7zKWuw=="],
 
     "@apidevtools/json-schema-ref-parser": ["@apidevtools/json-schema-ref-parser@14.2.1", "", { "dependencies": { "js-yaml": "^4.1.0" }, "peerDependencies": { "@types/json-schema": "^7.0.15" } }, "sha512-HmdFw9CDYqM6B25pqGBpNeLCKvGPlIx1EbLrVL0zPvj50CJQUHyBNBw45Muk0kEIkogo1VZvOKHajdMuAzSxRg=="],
-
-    "@ast-grep/napi": ["@ast-grep/napi@0.40.1", "", { "optionalDependencies": { "@ast-grep/napi-darwin-arm64": "0.40.1", "@ast-grep/napi-darwin-x64": "0.40.1", "@ast-grep/napi-linux-arm64-gnu": "0.40.1", "@ast-grep/napi-linux-arm64-musl": "0.40.1", "@ast-grep/napi-linux-x64-gnu": "0.40.1", "@ast-grep/napi-linux-x64-musl": "0.40.1", "@ast-grep/napi-win32-arm64-msvc": "0.40.1", "@ast-grep/napi-win32-ia32-msvc": "0.40.1", "@ast-grep/napi-win32-x64-msvc": "0.40.1" } }, "sha512-zPr2HFGW71wPZ1cexH8BbIhX/+jvOVTmPKV9d86tYzNhuo1T27rKCuQEHzaVklv2GGmmRhLABio0CcCjD96+KQ=="],
-
-    "@ast-grep/napi-darwin-arm64": ["@ast-grep/napi-darwin-arm64@0.40.1", "", { "os": "darwin", "cpu": "arm64" }, "sha512-SKVEq4vo47+KefnIgFW52PrmrMa8VOQW/cVK86LzjgITT32fqZEpVru/vhX0ZC8isiBFCdaAzUz4ZDqyC73Ybw=="],
-
-    "@ast-grep/napi-darwin-x64": ["@ast-grep/napi-darwin-x64@0.40.1", "", { "os": "darwin", "cpu": "x64" }, "sha512-HlXFk9kEIov+lEuPg1h4P/9TWoASQlp+4EEJd6IabGtZOVzEWXx/XZ7/vg9TGBzbIEj5cGgoKL1hGQsF29Yc/A=="],
-
-    "@ast-grep/napi-linux-arm64-gnu": ["@ast-grep/napi-linux-arm64-gnu@0.40.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-KdKqaEPLK/sPj0+jsc2env7WwHN9BLbItaM120VU+D1LHtYm6OPHL5xRtYB9/I2ybBDvu48qu4p9CCHnptSnIg=="],
-
-    "@ast-grep/napi-linux-arm64-musl": ["@ast-grep/napi-linux-arm64-musl@0.40.1", "", { "os": "linux", "cpu": "arm64" }, "sha512-AweLMXG78i/1toLfq543Ds495IQC+q1qzJGKOBABYL0LIlssT72NajXV+nfQUdUI880u/1WsvCGLKCVDV+kvlg=="],
-
-    "@ast-grep/napi-linux-x64-gnu": ["@ast-grep/napi-linux-x64-gnu@0.40.1", "", { "os": "linux", "cpu": "x64" }, "sha512-EXwTBDCH6OdiiIW5DMzs91cxtISMY7GYODjbIM8OxWkZxAWzTRSvKAOHiDldAWG5PC9TU3Gh7cDGanvRly8lAA=="],
-
-    "@ast-grep/napi-linux-x64-musl": ["@ast-grep/napi-linux-x64-musl@0.40.1", "", { "os": "linux", "cpu": "x64" }, "sha512-K3ZJvG1v4H7omtyzB2AUZRN67oorqu9Nsc7cLHNA1zQBSXfA1Ya8WIDniwsGb2cMO9uh46jDcdeWfKd6CMLAGQ=="],
-
-    "@ast-grep/napi-win32-arm64-msvc": ["@ast-grep/napi-win32-arm64-msvc@0.40.1", "", { "os": "win32", "cpu": "arm64" }, "sha512-ebWJSQA6bjHo8fwfzUD2+oDKqmqBq5aj0c9bdjKDBfJD8FBzxmAOrX02LNdTbbd3eFxFMANDos7o4q454263dw=="],
-
-    "@ast-grep/napi-win32-ia32-msvc": ["@ast-grep/napi-win32-ia32-msvc@0.40.1", "", { "os": "win32", "cpu": "ia32" }, "sha512-vNBOR4UKHVIvpIxO9E9e7tZN/nqDJ0oFc7rzPLj9mwzEQTUS1aY8yf9x1Y34AcJVAYDi1slQ+CeCva3gkQoh9Q=="],
-
-    "@ast-grep/napi-win32-x64-msvc": ["@ast-grep/napi-win32-x64-msvc@0.40.1", "", { "os": "win32", "cpu": "x64" }, "sha512-2oDioE66R8biBw991aI2jxwh2ZW+CUCpNHC74ZDJD+FYegrmNOq75CgU84Y23enaErIqF0ae2c0PS4+vXSLBxw=="],
 
     "@babel/code-frame": ["@babel/code-frame@7.27.1", "", { "dependencies": { "@babel/helper-validator-identifier": "^7.27.1", "js-tokens": "^4.0.0", "picocolors": "^1.1.1" } }, "sha512-cjQ7ZlQ0Mv3b47hABuTevyTuYN4i+loJKGeV9flcCgIK37cCXRh+L1bd3iBHlynerhQ7BhCkn2BPbQUL+rGqFg=="],
 

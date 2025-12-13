@@ -27,7 +27,7 @@ import {
   tagTool,
   writeFileTool,
 } from "./tools";
-import { astGrepTool, grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "./tools";
+import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "./tools";
 import { getEnvOrThrow } from "./utils/env";
 import { codeContextAgent } from "@/agents/code.context";
 import { codeDependencyAgent } from "@/agents/code.dependency";
@@ -149,17 +149,10 @@ export const mastra = new Mastra({
         [grepSearchTool.id]: grepSearchTool,
         [grepFilesWithMatchesTool.id]: grepFilesWithMatchesTool,
         [grepCountMatchesTool.id]: grepCountMatchesTool,
-        [astGrepTool.id]: astGrepTool,
       },
     }),
   },
   bundler: {
-    externals: [
-      "@ast-grep/napi",
-      "@libsql/darwin-arm64",
-      "@libsql/darwin-x64",
-      "@libsql/linux-arm64-gnu",
-      "@libsql/linux-x64-gnu",
-    ],
+    externals: ["@libsql/darwin-arm64", "@libsql/darwin-x64", "@libsql/linux-arm64-gnu", "@libsql/linux-x64-gnu"],
   },
 });

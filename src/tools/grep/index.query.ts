@@ -1,7 +1,4 @@
 import {
-  AstGrepInput,
-  AstGrepMatchOutput,
-  AstGrepOutput,
   CountMatchesInput,
   CountMatchesOutput,
   FilesWithMatchesInput,
@@ -10,10 +7,7 @@ import {
   SearchInput,
   SearchOutput,
 } from "./index.types";
-import { Lang, parse } from "@ast-grep/napi";
 import { spawn } from "node:child_process";
-import { readdir, stat } from "node:fs/promises";
-import { extname, join } from "node:path";
 import * as vscodeRipGrep from "vscode-ripgrep";
 
 const rgPath = vscodeRipGrep.rgPath;
@@ -295,144 +289,5 @@ export const countMatchesQuery = async ({ input }: { input: CountMatchesInput })
   return {
     fileCounts,
     totalMatches,
-  };
-};
-
-// AST-Grep query for structural code search using JS API
-// Map language strings to Lang enum (only built-in languages supported)
-const langMap: Record<string, Lang> = {
-  ts: Lang.TypeScript,
-  tsx: Lang.Tsx,
-  js: Lang.JavaScript,
-  jsx: Lang.JavaScript, // JSX uses JavaScript parser
-  html: Lang.Html,
-  css: Lang.Css,
-};
-
-// Map file extensions to languages (only built-in languages supported)
-const extToLang: Record<string, string> = {
-  ".ts": "ts",
-  ".tsx": "tsx",
-  ".js": "js",
-  ".jsx": "jsx",
-  ".mjs": "js",
-  ".cjs": "js",
-  ".html": "html",
-  ".htm": "html",
-  ".css": "css",
-};
-
-// Get file extensions for a language
-function getExtensionsForLang(lang: string): string[] {
-  const extensions: string[] = [];
-  for (const [ext, l] of Object.entries(extToLang)) {
-    if (l === lang) {
-      extensions.push(ext);
-    }
-  }
-  return extensions;
-}
-
-// Recursively find files with matching extensions
-async function findFiles(dir: string, extensions: string[], maxDepth = 10, currentDepth = 0): Promise<string[]> {
-  if (currentDepth >= maxDepth) return [];
-
-  const files: string[] = [];
-  try {
-    const entries = await readdir(dir, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const fullPath = join(dir, entry.name);
-
-      // Skip node_modules, .git, and other common directories
-      if (entry.isDirectory()) {
-        if (entry.name.startsWith(".") || entry.name === "node_modules" || entry.name === "dist") {
-          continue;
-        }
-        const subFiles = await findFiles(fullPath, extensions, maxDepth, currentDepth + 1);
-        files.push(...subFiles);
-      } else if (entry.isFile()) {
-        const ext = extname(entry.name).toLowerCase();
-        if (extensions.includes(ext)) {
-          files.push(fullPath);
-        }
-      }
-    }
-  } catch {
-    // Ignore permission errors
-  }
-
-  return files;
-}
-
-export const astGrepQuery = async ({ input }: { input: AstGrepInput }): Promise<AstGrepOutput> => {
-  const matches: AstGrepMatchOutput[] = [];
-  const lang = input.lang || "ts";
-  const sgLang = langMap[lang];
-
-  if (!sgLang) {
-    throw new Error(`Unsupported language: ${lang}`);
-  }
-
-  const searchPath = input.path || ".";
-  const extensions = getExtensionsForLang(lang);
-
-  // Check if path is a file or directory
-  let filesToSearch: string[] = [];
-  try {
-    const pathStat = await stat(searchPath);
-    if (pathStat.isFile()) {
-      filesToSearch = [searchPath];
-    } else if (pathStat.isDirectory()) {
-      filesToSearch = await findFiles(searchPath, extensions);
-    }
-  } catch {
-    throw new Error(`Path not found: ${searchPath}`);
-  }
-
-  // Search each file
-  for (const filePath of filesToSearch) {
-    try {
-      const content = await Bun.file(filePath).text();
-      const ast = parse(sgLang, content);
-      const root = ast.root();
-      const foundNodes = root.findAll(input.pattern);
-
-      for (const node of foundNodes) {
-        const range = node.range();
-        let replacement: string | undefined;
-
-        // Handle rewrite if specified
-        if (input.options?.rewrite) {
-          const edit = node.replace(input.options.rewrite);
-          replacement = edit.insertedText;
-        }
-
-        matches.push({
-          file: filePath,
-          range: {
-            start: {
-              line: range.start.line,
-              column: range.start.column,
-            },
-            end: {
-              line: range.end.line,
-              column: range.end.column,
-            },
-          },
-          matchedCode: node.text(),
-          replacement,
-        });
-      }
-    } catch {
-      // Skip files that can't be parsed
-      continue;
-    }
-  }
-
-  return {
-    matches,
-    totalMatches: matches.length,
-    language: lang,
   };
 };

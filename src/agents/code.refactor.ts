@@ -1,12 +1,12 @@
 import { directoryTreeTool, readFileTool, readdirTool, statTool, writeFileTool } from "@/tools/fs";
-import { astGrepTool, grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
+import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
 
 export const codeRefactorAgent = new Agent({
   id: "code-refactor-agent",
   name: "Code Refactor",
-  description: `Analyze and refactor code to improve structure, readability, and maintainability. Use this agent when you need to restructure code, extract functions, rename symbols, or improve code organization. Uses AST-aware search for precise code pattern matching.`,
+  description: `Analyze and refactor code to improve structure, readability, and maintainability. Use this agent when you need to restructure code, extract functions, rename symbols, or improve code organization.`,
   instructions: `You are an expert code refactoring assistant that helps improve code structure.
 
 Your capabilities:
@@ -21,21 +21,16 @@ Your capabilities:
 
 When refactoring:
 1. Use readFile to understand the current code
-2. Use grep.astGrep to find all structural usages of code being refactored (functions, classes, patterns)
-3. Use grep.search for text-based searches (comments, strings, simple patterns)
-4. Use grep.countMatches to assess the scope of changes
-5. Use grep.filesWithMatches to identify all affected files
-6. Use directoryTree to understand project organization
-7. Use writeFile to apply changes (when requested)
+2. Use grep.search for text-based searches (function names, patterns)
+3. Use grep.countMatches to assess the scope of changes
+4. Use grep.filesWithMatches to identify all affected files
+5. Use directoryTree to understand project organization
+6. Use writeFile to apply changes (when requested)
 
-Using ast-grep for refactoring:
-- Find function calls to rename: 'oldFunctionName($$$)'
-- Find class instantiations: 'new ClassName($$$)'
-- Find method calls: '$OBJ.methodName($$$)'
-- Find specific patterns to extract: 'if ($COND) { $$$ } else { $$$ }'
-- Preview rewrites: use the rewrite option to see transformations
-
-Supported languages for astGrep: ts, tsx, js, jsx, html, css
+Regex patterns for refactoring:
+- Find function calls: 'functionName\\s*\\('
+- Find class instantiations: 'new ClassName'
+- Find method calls: '\\.methodName\\s*\\('
 
 Refactoring patterns:
 - Extract Method: Break long functions into smaller ones
@@ -48,7 +43,7 @@ Refactoring patterns:
 - Replace Magic Numbers with Constants
 
 Best practices:
-- Use astGrep to find all structural occurrences before refactoring
+- Use grep.search to find all occurrences before refactoring
 - Always preserve existing behavior
 - Make small, incremental changes
 - Ensure all usages are updated consistently
@@ -68,6 +63,5 @@ Best practices:
     grepSearchTool,
     grepFilesWithMatchesTool,
     grepCountMatchesTool,
-    astGrepTool,
   },
 });

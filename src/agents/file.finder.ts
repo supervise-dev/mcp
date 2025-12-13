@@ -2,7 +2,6 @@ import { directoryTreeTool, existsTool, readdirTool, statTool } from "@/tools/fs
 import { grepFilesWithMatchesTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
-import { TokenLimiterProcessor } from "@mastra/core/processors";
 
 export const fileFinderAgent = new Agent({
   id: "file-finder-agent",

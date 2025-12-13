@@ -1,7 +1,5 @@
-import { astGrepQuery, countMatchesQuery, filesWithMatchesQuery, searchQuery } from "./index.query";
+import { countMatchesQuery, filesWithMatchesQuery, searchQuery } from "./index.query";
 import {
-  astGrepInput,
-  astGrepOutput,
   countMatchesInput,
   countMatchesOutput,
   filesWithMatchesInput,
@@ -41,16 +39,5 @@ export const grepCountMatchesTool = createTool({
   },
 });
 
-export const astGrepTool = createTool({
-  id: "grep.astGrep",
-  description:
-    "Search for code structure patterns using ast-grep. Supports TypeScript (.ts), TSX/React (.tsx), and other languages. Use patterns like 'console.log($$$)', 'function $NAME($$$) { $$$ }', or 'const $VAR = useState($$$)' to find structural matches in code.",
-  inputSchema: astGrepInput,
-  outputSchema: astGrepOutput,
-  execute: async (input, context) => {
-    return astGrepQuery({ input });
-  },
-});
-
-export { astGrepQuery, countMatchesQuery, filesWithMatchesQuery, searchQuery } from "./index.query";
+export { countMatchesQuery, filesWithMatchesQuery, searchQuery } from "./index.query";
 export * from "./index.types";

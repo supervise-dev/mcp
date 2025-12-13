@@ -1,5 +1,5 @@
 import { directoryTreeTool, existsTool, readFileTool, readdirTool, statTool } from "@/tools/fs";
-import { astGrepTool, grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
+import { grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { execTool } from "@/tools/process";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
@@ -7,7 +7,7 @@ import { Agent } from "@mastra/core/agent";
 export const codeDependencyAgent = new Agent({
   id: "code-dependency-agent",
   name: "Code Dependency",
-  description: `Analyze project dependencies, imports, and module relationships. Use this agent when you need to understand dependency graphs, find unused dependencies, check for circular imports, or audit package versions. Uses AST-aware analysis to trace import patterns.`,
+  description: `Analyze project dependencies, imports, and module relationships. Use this agent when you need to understand dependency graphs, find unused dependencies, check for circular imports, or audit package versions.`,
   instructions: `You are an expert dependency analyst that helps manage and understand project dependencies.
 
 Your capabilities:
@@ -22,22 +22,16 @@ Your capabilities:
 
 When analyzing dependencies:
 1. Use readFile to examine package manifests (package.json, requirements.txt, etc.)
-2. Use grep.astGrep to find import/require statements with structural matching
-3. Use grep.search for text-based dependency searches
-4. Use grep.filesWithMatches to find files using specific packages
-5. Use exec to run package manager commands (npm ls, pip list)
-6. Use exists to check for lock files
-7. Use directoryTree to visualize the project structure
+2. Use grep.search for text-based dependency searches (import/require patterns)
+3. Use grep.filesWithMatches to find files using specific packages
+4. Use exec to run package manager commands (npm ls, pip list)
+5. Use exists to check for lock files
+6. Use directoryTree to visualize the project structure
 
-Using ast-grep for dependency analysis:
-- Find ES6 imports: 'import $WHAT from "$PACKAGE"'
-- Find named imports: 'import { $$$ } from "$PACKAGE"'
-- Find require calls: 'require("$PACKAGE")'
-- Find dynamic imports: 'import($PACKAGE)'
-- Find re-exports: 'export { $$$ } from "$PACKAGE"'
-- Find specific package usage: 'import $$ from "react"'
-
-Supported languages for astGrep: ts, tsx, js, jsx, html, css
+Regex patterns for dependency analysis:
+- Find ES6 imports: 'import.*from'
+- Find require calls: 'require\\s*\\('
+- Find dynamic imports: 'import\\s*\\('
 
 Analysis types:
 - Direct dependencies: Listed in manifest
@@ -72,7 +66,6 @@ Output format:
     existsTool,
     grepSearchTool,
     grepFilesWithMatchesTool,
-    astGrepTool,
     execTool,
   },
 });

@@ -1,12 +1,12 @@
 import { directoryTreeTool, readFileTool, readdirTool, statTool } from "@/tools/fs";
-import { astGrepTool, grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
+import { grepCountMatchesTool, grepFilesWithMatchesTool, grepSearchTool } from "@/tools/grep";
 import { getEnvOrThrow } from "@/utils/env";
 import { Agent } from "@mastra/core/agent";
 
 export const codeSecurityAgent = new Agent({
   id: "code-security-agent",
   name: "Code Security",
-  description: `Analyze code for security vulnerabilities and suggest fixes. Use this agent when you need to audit code for security issues, check for common vulnerabilities (OWASP Top 10), or ensure secure coding practices. Uses AST-aware analysis to precisely identify dangerous code patterns.`,
+  description: `Analyze code for security vulnerabilities and suggest fixes. Use this agent when you need to audit code for security issues, check for common vulnerabilities (OWASP Top 10), or ensure secure coding practices.`,
   instructions: `You are an expert security analyst that helps identify and fix security vulnerabilities in code.
 
 Your capabilities:
@@ -21,20 +21,17 @@ Your capabilities:
 
 When analyzing security:
 1. Use readFile to examine code for vulnerabilities
-2. Use grep.astGrep to find dangerous code patterns precisely
-3. Use grep.search for text patterns (secrets, comments, config values)
-4. Use grep.countMatches to assess vulnerability scope
-5. Use directoryTree to understand application structure
+2. Use grep.search for text patterns (dangerous functions, secrets, config values)
+3. Use grep.countMatches to assess vulnerability scope
+4. Use directoryTree to understand application structure
 
-Using ast-grep for security analysis:
-- Find eval calls: 'eval($CODE)'
-- Find innerHTML assignments: '$EL.innerHTML = $VALUE'
-- Find dangerouslySetInnerHTML: 'dangerouslySetInnerHTML={{ __html: $VALUE }}'
-- Find exec/spawn calls: 'exec($CMD)', 'spawn($CMD, $$$)'
-- Find SQL query building: Pattern for string concatenation in queries
-- Find crypto usage: 'crypto.createHash($ALG)'
-
-Supported languages for astGrep: ts, tsx, js, jsx, html, css
+Dangerous patterns to search with grep:
+- 'eval\\s*\\(' - code execution
+- '\\.innerHTML\\s*=' - XSS via innerHTML
+- 'dangerouslySetInnerHTML' - React XSS
+- 'new Function\\s*\\(' - dynamic code execution
+- 'document\\.write' - DOM manipulation
+- 'exec\\s*\\(|spawn\\s*\\(' - command execution
 
 Vulnerability categories:
 - Injection: SQL, NoSQL, OS command, LDAP, XSS
@@ -47,13 +44,6 @@ Vulnerability categories:
 - Insecure Deserialization
 - Using Components with Known Vulnerabilities
 - Insufficient Logging & Monitoring
-
-Dangerous patterns to search with astGrep:
-- 'eval($$$)' - code execution
-- '$EL.innerHTML = $$$' - XSS via innerHTML
-- 'dangerouslySetInnerHTML' - React XSS
-- 'new Function($$$)' - dynamic code execution
-- 'document.write($$$)' - DOM manipulation
 
 Output format:
 - Severity: Critical, High, Medium, Low
@@ -75,6 +65,5 @@ Output format:
     grepSearchTool,
     grepFilesWithMatchesTool,
     grepCountMatchesTool,
-    astGrepTool,
   },
 });

@@ -70,7 +70,6 @@ cat > package.json <<EOF
   "name": "mcp-dependencies",
   "private": true,
   "dependencies": {
-    "@ast-grep/napi": "0.40.1",
     "@libsql/linux-x64-gnu": "0.5.22",
     "@libsql/linux-arm64-gnu": "0.5.22",
     "@libsql/darwin-x64": "0.5.22",

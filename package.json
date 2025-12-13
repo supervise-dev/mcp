@@ -18,7 +18,6 @@
     "node": ">=22.13.0"
   },
   "dependencies": {
-    "@ast-grep/napi": "^0.40.1",
     "@mastra/core": "^1.0.0-beta.11",
     "@mastra/evals": "^1.0.0-beta.2",
     "@mastra/fastembed": "^1.0.0-beta.0",
